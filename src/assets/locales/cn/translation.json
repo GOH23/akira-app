@@ -1,0 +1,104 @@
+
+{
+    "header": {
+        "appTitle": "应用",
+        "button": {
+            "addScene": "添加场景",
+            "webOpen": "打开网页版",
+            "deleteScene": "删除场景"
+        },
+        "menu1": "场景",
+        "menu2": "设置"
+    },
+    "mainPage": {
+        "modal": {
+            "name1": "标题",
+            "name2": "作者",
+            "name3": "状态",
+            "name4": "创建日期"
+        },
+        "NewTitle": "新闻",
+        "SocialTitle": "社交",
+        "SupportMe": "支持我",
+        "GithubButton": "GitHub星标",
+        "SelectButtonNew": {
+            "webName": "网页",
+            "desktopName": "应用"
+        }
+    },
+    "scenePage": {
+        "MotionCaptureSettings": {
+            "title": "动作捕捉设置",
+            "settingTitle": "身体移动",
+            "settingTitle2": "腿部移动",
+            "settingTitle3": "手臂移动",
+            "settingTitle4": "头部移动",
+            "settingTitle5": "面部和眼睛计算",
+            "settingTitle6": "Holistic&Kalidokit计算"
+        },
+        "MaterialsControl": {
+            "title": "材质",
+            "title1": "名称",
+            "stat1": "可见性"
+        },
+        "AnimationControl": {
+            "title": "动画控制界面",
+            "table": {
+                "title1": "关键帧",
+                "title2": "骨骼",
+                "title3": "变形",
+                "title4": "操作"
+            },
+            "buttons": {
+                "buttonTitle1": "导出为GLTF",
+                "buttonTitle2": "导出为VMD",
+                "buttonTitle3": "清除关键帧数据",
+                "buttonTitle4": "应用"
+            }
+        },
+        "Tutor": {
+            "Settings": {
+                "title": "设置面板",
+                "description": "配置全身捕捉和Y轴静态位置"
+            },
+            "SelectVideo": {
+                "title": "视频选择面板",
+                "description": "上传视频提取舞蹈动画并调整音频设置"
+            },
+            "AnimationControlUi": {
+                "title": "关键帧控制面板",
+                "description": "管理捕获的帧并导出为VMD/glTF格式"
+            },
+            "FullScreen": {
+                "title": "全屏模式",
+                "description": "切换到全屏模式"
+            },
+            "MaterialsButton": {
+                "title": "角色服装管理",
+                "description": "调整模型服装的可见性"
+            }
+        },
+        "VariableSettings": {
+            "title": "变量",
+            "settingTitle": "姿势缩放"
+        },
+        "ModalTitle": "选择视频",
+        "FileUpload": "上传视频文件",
+        "RecordVideo": "录制视频"
+    },
+    "settingsModal": {
+        "title": "设置",
+        "titleLang": "语言",
+        "titleSelectModel": "模型",
+        "titleSceneName": "场景名称",
+        "buttons": {
+            "cancelButton": "取消",
+            "submitButton": "提交",
+            "selectModel": "选择模型",
+            "addModel": "添加模型"
+        }
+    },
+    "messages": {
+        "deleteMessage": "确定删除选中的场景吗？"
+    }
+}

@@ -1,0 +1,103 @@
+{
+    "header": {
+        "appTitle": "アプリ",
+        "button": {
+            "addScene": "シーンを追加",
+            "webOpen": "Web版を開く",
+            "deleteScene": "シーンを削除"
+        },
+        "menu1": "シーン",
+        "menu2": "設定"
+    },
+    "mainPage": {
+        "modal": {
+            "name1": "タイトル",
+            "name2": "作者",
+            "name3": "ステータス",
+            "name4": "作成日"
+        },
+        "NewTitle": "ニュース",
+        "SocialTitle": "SNS",
+        "SupportMe": "支援する",
+        "GithubButton": "GitHubでスター",
+        "SelectButtonNew": {
+            "webName": "Web",
+            "desktopName": "アプリ"
+        }
+    },
+    "scenePage": {
+        "MotionCaptureSettings": {
+            "title": "モーションキャプチャ設定",
+            "settingTitle": "体の動き",
+            "settingTitle2": "足の動き",
+            "settingTitle3": "腕の動き",
+            "settingTitle4": "頭の動き",
+            "settingTitle5": "顔と目の計算",
+            "settingTitle6": "Holistic&Kalidokit計算"
+        },
+        "MaterialsControl": {
+            "title": "マテリアル",
+            "title1": "名前",
+            "stat1": "表示"
+        },
+        "AnimationControl": {
+            "title": "アニメーション制御",
+            "table": {
+                "title1": "キーフレーム",
+                "title2": "ボーン",
+                "title3": "モーフ",
+                "title4": "アクション"
+            },
+            "buttons": {
+                "buttonTitle1": "GLTFにエクスポート",
+                "buttonTitle2": "VMDにエクスポート",
+                "buttonTitle3": "キーフレームをクリア",
+                "buttonTitle4": "適用"
+            }
+        },
+        "Tutor": {
+            "Settings": {
+                "title": "設定パネル",
+                "description": "全身キャプチャとY軸の固定位置を設定"
+            },
+            "SelectVideo": {
+                "title": "動画選択",
+                "description": "ダンスアニメーションの抽出と音声設定"
+            },
+            "AnimationControlUi": {
+                "title": "キーフレーム管理",
+                "description": "VMD/glTF形式へのエクスポート"
+            },
+            "FullScreen": {
+                "title": "全画面表示",
+                "description": "全画面モードに切り替え"
+            },
+            "MaterialsButton": {
+                "title": "服装管理",
+                "description": "服装の表示設定"
+            }
+        },
+        "VariableSettings": {
+            "title": "変数",
+            "settingTitle": "ポーズスケール"
+        },
+        "ModalTitle": "動画を選択",
+        "FileUpload": "動画をアップロード",
+        "RecordVideo": "動画を録画"
+    },
+    "settingsModal": {
+        "title": "設定",
+        "titleLang": "言語",
+        "titleSelectModel": "モデル",
+        "titleSceneName": "シーン名",
+        "buttons": {
+            "cancelButton": "キャンセル",
+            "submitButton": "保存",
+            "selectModel": "モデルを選択",
+            "addModel": "モデルを追加"
+        }
+    },
+    "messages": {
+        "deleteMessage": "選択したシーンを削除しますか？"
+    }
+}

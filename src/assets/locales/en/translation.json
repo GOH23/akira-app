@@ -1,0 +1,103 @@
+{
+    "header": {
+        "appTitle": "App",
+        "button": {
+            "addScene": "Add Scene",
+            "webOpen": "Open Web version",
+            "deleteScene": "Delete scene"
+        },
+        "menu1": "Scenes",
+        "menu2": "Settings"
+    },
+    "mainPage": {
+        "modal": {
+            "name1": "Title",
+            "name2": "Author",
+            "name3": "Status",
+            "name4": "Created"
+        },
+        "NewTitle": "News",
+        "SocialTitle": "Socials",
+        "SupportMe": "Support me",
+        "GithubButton": "Star on GitHub",
+        "SelectButtonNew": {
+            "webName": "Web",
+            "desktopName": "Application"
+        }
+    },
+    "scenePage": {
+        "MotionCaptureSettings": {
+            "title": "Motion capture settings",
+            "settingTitle": "Move body",
+            "settingTitle2": "Move legs",
+            "settingTitle3": "Move arms",
+            "settingTitle4": "Move head",
+            "settingTitle5": "Calculate facial and eyes",
+            "settingTitle6": "Holistic&Kalidokit calculation"
+        },
+        "MaterialsControl": {
+            "title": "Materials",
+            "title1": "Name",
+            "stat1": "Visisbility"
+        },
+        "AnimationControl": {
+            "title": "Animation control UI",
+            "table": {
+                "title1": "Keyframe",
+                "title2": "Bones",
+                "title3": "Morphs",
+                "title4": "Action"
+            },
+            "buttons": {
+                "buttonTitle1": "Export to GLTF",
+                "buttonTitle2": "Export to VMD",
+                "buttonTitle3": "Clear keyframes data",
+                "buttonTitle4": "Apply"
+            }
+        },
+        "Tutor": {
+            "Settings": {
+                "title": "Settings Panel",
+                "description": "Here you can configure full-body capture using video, as well as the static position along the Y-axis"
+            },
+            "SelectVideo": {
+                "title": "Video Selection Panel",
+                "description": "Here you can upload any video to extract a dance animation of a person from the video, as well as adjust audio settings"
+            },
+            "AnimationControlUi": {
+                "title": "Recorded Keyframes Control Panel",
+                "description": "Here you can manage captured frames and export them to VMD/glTF formats"
+            },
+            "FullScreen": {
+                "title": "Application Full Screen Mode",
+                "description": "Switches the application to full screen mode"
+            },
+            "MaterialsButton": {
+                "title": "Character Clothing Management Panel",
+                "description": "Here you can currently adjust the visibility of the model's clothing"
+            }
+        },
+        "VariableSettings": {
+            "title": "Variables",
+            "settingTitle": "Pose scale"
+        },
+        "ModalTitle": "Select Video",
+        "FileUpload": "Load Video File",
+        "RecordVideo": "Record video"
+    },
+    "settingsModal": {
+        "title": "Settings",
+        "titleLang": "Selected Language",
+        "titleSelectModel": "Selected Model",
+        "titleSceneName": "Scene name",
+        "buttons": {
+            "cancelButton": "Cancel",
+            "submitButton": "Submit",
+            "selectModel": "Select Model",
+            "addModel": "Add Model"
+        }
+    },
+    "messages": {
+        "deleteMessage": "You want to delete selected scene?"
+    }
+}

@@ -1,0 +1,103 @@
+{
+    "header": {
+        "appTitle": "Приложение",
+        "button": {
+            "addScene": "Добавить сцену",
+            "webOpen": "Открыть веб-версию",
+            "deleteScene": "Удалить сцену"
+        },
+        "menu1": "Сцены",
+        "menu2": "Настройки"
+    },
+    "mainPage": {
+        "modal": {
+            "name1": "Название",
+            "name2": "Автор",
+            "name3": "Статус",
+            "name4": "Создано"
+        },
+        "NewTitle": "Новости",
+        "SocialTitle": "Соцсети",
+        "SupportMe": "Поддержать",
+        "GithubButton": "Звезда на GitHub",
+        "SelectButtonNew": {
+            "webName": "Веб",
+            "desktopName": "Приложение"
+        }
+    },
+    "scenePage": {
+        "MotionCaptureSettings": {
+            "title": "Настройки захвата движений",
+            "settingTitle": "Движение тела",
+            "settingTitle2": "Движение ног",
+            "settingTitle3": "Движение рук",
+            "settingTitle4": "Движение головы",
+            "settingTitle5": "Расчет лица и глаз",
+            "settingTitle6": "Расчет Holistic&Kalidokit"
+        },
+        "MaterialsControl": {
+            "title": "Материалы",
+            "title1": "Название",
+            "stat1": "Видимость"
+        },
+        "AnimationControl": {
+            "title": "Панель управления анимацией",
+            "table": {
+                "title1": "Ключевой кадр",
+                "title2": "Кости",
+                "title3": "Морфы",
+                "title4": "Действие"
+            },
+            "buttons": {
+                "buttonTitle1": "Экспорт в GLTF",
+                "buttonTitle2": "Экспорт в VMD",
+                "buttonTitle3": "Очистить ключевые кадры",
+                "buttonTitle4": "Применить"
+            }
+        },
+        "Tutor": {
+            "Settings": {
+                "title": "Панель настроек",
+                "description": "Настройка захвата всего тела через видео и статичной позиции по Y-оси"
+            },
+            "SelectVideo": {
+                "title": "Выбор видео",
+                "description": "Загрузите видео для извлечения анимации танца и настройки звука"
+            },
+            "AnimationControlUi": {
+                "title": "Управление ключевыми кадрами",
+                "description": "Управление кадрами и экспорт в VMD/glTF"
+            },
+            "FullScreen": {
+                "title": "Полноэкранный режим",
+                "description": "Переключение в полноэкранный режим"
+            },
+            "MaterialsButton": {
+                "title": "Управление одеждой",
+                "description": "Настройка видимости одежды модели"
+            }
+        },
+        "VariableSettings": {
+            "title": "Переменные",
+            "settingTitle": "Масштаб позы"
+        },
+        "ModalTitle": "Выбор видео",
+        "FileUpload": "Загрузить видео",
+        "RecordVideo": "Записать видео"
+    },
+    "settingsModal": {
+        "title": "Настройки",
+        "titleLang": "Язык",
+        "titleSelectModel": "Модель",
+        "titleSceneName": "Название сцены",
+        "buttons": {
+            "cancelButton": "Отмена",
+            "submitButton": "Сохранить",
+            "selectModel": "Выбрать модель",
+            "addModel": "Добавить модель"
+        }
+    },
+    "messages": {
+        "deleteMessage": "Удалить выбранную сцену?"
+    }
+}
