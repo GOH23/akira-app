@@ -1,6 +1,6 @@
 import { Engine, Matrix, Quaternion, Space, Vector3, VideoRecorder } from "@babylonjs/core";
 import { HolisticLandmarkerResult, NormalizedLandmark } from "@mediapipe/tasks-vision";
-import { MmdModel, MmdWasmModel, MmdWasmMorphController, ReadonlyRuntimeMorph } from "babylon-mmd";
+import { MmdModel, VmdLoader } from "babylon-mmd";
 import { IMmdRuntimeLinkedBone } from "babylon-mmd/esm/Runtime/IMmdRuntimeLinkedBone";
 import { faceKeypoints, handKeypoints, poseKeypoints } from "./MotionTypes";
 import { KalmanVectorFilter, OneEuroVectorFilter } from "./Filters";
@@ -8,7 +8,6 @@ import * as Kalidokit from 'kalidokit'
 import Encoding from "encoding-japanese"
 import { clamp } from "kalidokit/dist/utils/helpers";
 import { Results } from "@mediapipe/holistic";
-import Euler from "kalidokit/dist/utils/euler";
 export type BoneType = "hand" | "pose" | "face"
 // Константы для имен костей
 export enum MMDModelBones {
@@ -36,6 +35,7 @@ export enum MMDModelBones {
     Eyebrows = "眉",
     Mouth = "口"
 }
+
 export type KeyFrameType = {
     keyNum: number;
     keyData: {
@@ -144,7 +144,31 @@ export class MotionModel {
             return false;
         }
     }
+    setTestRotation(boneName: MMDModelBones | string, rotation: { x: number, y: number, z: number }, Space: Space = 0, lerpFactor: number = this.lerpFactor): void {
+        if (this.boneMap.size > 0) {
+            const bone = this.boneMap.get(boneName);
+            if (bone) {
 
+                const vector = new Vector3(
+                    rotation.x * 1.5,
+                    rotation.y * 1.5,
+                    rotation.z * 1.5
+                );
+                bone.setRotationQuaternion(Quaternion.Slerp(bone.rotationQuaternion, vector.toQuaternion(), lerpFactor),
+                    Space
+                )
+                // this._Model.mesh.skeleton.bones.find(b => b.name === boneName)?.setRotation(
+                //     Vector3.LerpToRef(
+                //         bone.position,
+                //         vector,
+                //         lerpFactor,
+                //         bone.position
+                //     )
+                // );
+
+            }
+        }
+    }
     setRotation(boneName: MMDModelBones, rotation: Quaternion, Space: Space = 0, lerpFactor: number = this.lerpFactor): void {
         if (this.boneMap.size > 0) {
             const bone = this.boneMap.get(boneName);
@@ -209,89 +233,96 @@ export class MotionModel {
             });
         }
 
-        if (leftHandLandmarks) {
-            riggedLeftHand = Kalidokit.Hand.solve(leftHandLandmarks, "Left");
-            this.animateLeftWristAndFingers(riggedLeftHand);
+        // if (leftHandLandmarks) {
+        //     riggedLeftHand = Kalidokit.Hand.solve(leftHandLandmarks, "Left");
+        //     this.animateLeftWristAndFingers(riggedLeftHand);
 
-            this.setRotation(
-                MMDModelBones.LeftWrist,
-                Quaternion.FromEulerAngles(
-                    riggedLeftHand.LeftWrist.x,
-                    -riggedLeftHand.LeftWrist.y,
-                    -riggedPose.LeftHand.z
-                )
-            );
-        }
+        //     this.setRotation(
+        //         MMDModelBones.LeftWrist,
+        //         Quaternion.FromEulerAngles(
+        //             riggedLeftHand.LeftWrist.x,
+        //             -riggedLeftHand.LeftWrist.y,
+        //             -riggedPose.LeftHand.z
+        //         )
+        //     );
+        // }
 
-        if (rightHandLandmarks) {
-            riggedRightHand = Kalidokit.Hand.solve(rightHandLandmarks, "Right");
-            this.animateRightWristAndFingers(riggedRightHand)
-            this.setRotation(
-                MMDModelBones.RightWrist,
-                Quaternion.FromEulerAngles(
-                    riggedRightHand.RightWrist.x,
-                    -riggedRightHand.RightWrist.y,
-                    -riggedPose.RightHand.z
-                )
-            );
-        }
+        // if (rightHandLandmarks) {
+        //     riggedRightHand = Kalidokit.Hand.solve(rightHandLandmarks, "Right");
+        //     this.animateRightWristAndFingers(riggedRightHand)
+        //     this.setRotation(
+        //         MMDModelBones.RightWrist,
+        //         Quaternion.FromEulerAngles(
+        //             riggedRightHand.RightWrist.x,
+        //             -riggedRightHand.RightWrist.y,
+        //             -riggedPose.RightHand.z
+        //         )
+        //     );
+        // }
 
         if (riggedPose) {
-            // Преобразование поворотов тела с учетом MMD координатной системы
-            const lowerBodyRotation = Quaternion.FromEulerAngles(
-                riggedPose.Hips.rotation.x,
-                -riggedPose.Hips.rotation.y,
-                -riggedPose.Hips.rotation.z
-            );
-
-            const upperBodyRotation = Quaternion.FromEulerAngles(
-                riggedPose.Spine.x,
-                -riggedPose.Spine.y,
-                -riggedPose.Spine.z
-            );
+            this.setTestRotation(MMDModelBones.LowerBody, riggedPose.Hips.rotation);
+            this.setTestRotation(MMDModelBones.LowerBody, riggedPose.Spine);
+            this.setTestRotation(MMDModelBones.LeftArm, riggedPose.RightUpperArm)
+            this.setTestRotation(MMDModelBones.LeftElbow, riggedPose.RightLowerArm)
+            this.setTestRotation(MMDModelBones.RightArm, riggedPose.LeftUpperArm)
+            this.setTestRotation(MMDModelBones.RightElbow, riggedPose.LeftLowerArm)
             this.moveBodyOld(riggedPose.Hips.worldPosition)
-            this.setRotation(MMDModelBones.LowerBody, lowerBodyRotation);
-            this.setRotation(MMDModelBones.UpperBody, upperBodyRotation);
+            this.updateFacialExpressionsOld(riggedFace);
+            // Преобразование поворотов тела с учетом MMD координатной системы
+            // const lowerBodyRotation = Quaternion.FromEulerAngles(
+            //     riggedPose.Hips.rotation.x,
+            //     -riggedPose.Hips.rotation.y,
+            //     -riggedPose.Hips.rotation.z
+            // );
 
-            if (riggedFace && this.MotionSettings.FacialAndEyesCalculate) {
-                // Преобразование поворотов головы с учетом MMD координатной системы
-                const headRotation = Quaternion.FromEulerAngles(
-                    riggedFace.head.x,
-                    -riggedFace.head.y,
-                    -riggedFace.head.z
-                );
-                this.setRotation(MMDModelBones.Head, headRotation);
-                this.updateFacialExpressionsOld(riggedFace);
-            }
-            // Преобразование поворотов рук с учетом MMD координатной системы
-            if (this.MotionSettings.ArmsCalculate) {
-                const rightArmRotation = Quaternion.FromEulerAngles(
-                    riggedPose.LeftUpperArm.x * 1.2,
-                    -riggedPose.LeftUpperArm.y * 1.5,
-                    riggedPose.LeftUpperArm.z
-                ).normalize();
-                const leftArmRotation = Quaternion.FromEulerAngles(
-                    riggedPose.RightUpperArm.x * 1.2,
-                    -riggedPose.RightUpperArm.y * 1.5,
-                    riggedPose.RightUpperArm.z
-                ).normalize();
-                const rightElbowRotation = Quaternion.FromEulerAngles(
-                    riggedPose.LeftLowerArm.x,
-                    riggedPose.LeftLowerArm.y * 1.5,
-                    riggedPose.LeftLowerArm.z * 1.5
-                ).negate().normalize();
-                const leftElbowRotation = Quaternion.FromEulerAngles(
-                    riggedPose.RightLowerArm.x,
-                    riggedPose.RightLowerArm.y * 1.5,
-                    riggedPose.RightLowerArm.z * 1.5
-                ).negate().normalize();
-                // Применяем повороты рук                
-                this.setRotation(MMDModelBones.LeftArm, leftArmRotation);
-                this.setRotation(MMDModelBones.LeftElbow, leftElbowRotation);
-                this.setRotation(MMDModelBones.RightElbow, rightElbowRotation);
-                this.setRotation(MMDModelBones.RightArm, rightArmRotation);
-                //this.setRotation(MMDModelBones.RightElbow, rightElbowRotation);
-            }
+            // const upperBodyRotation = Quaternion.FromEulerAngles(
+            //     riggedPose.Spine.x,
+            //     -riggedPose.Spine.y,
+            //     -riggedPose.Spine.z
+            // );
+
+            // this.setRotation(MMDModelBones.LowerBody, lowerBodyRotation);
+            // this.setRotation(MMDModelBones.UpperBody, upperBodyRotation);
+
+            // if (riggedFace && this.MotionSettings.FacialAndEyesCalculate) {
+            //     // Преобразование поворотов головы с учетом MMD координатной системы
+            //     const headRotation = Quaternion.FromEulerAngles(
+            //         riggedFace.head.x,
+            //         -riggedFace.head.y,
+            //         -riggedFace.head.z
+            //     );
+            //     this.setRotation(MMDModelBones.Head, headRotation);
+            //     this.updateFacialExpressionsOld(riggedFace);
+            // }
+            // // Преобразование поворотов рук с учетом MMD координатной системы
+            // if (this.MotionSettings.ArmsCalculate) {
+            //     const rightArmRotation = Quaternion.FromEulerAngles(
+            //         riggedPose.LeftUpperArm.x * 1.2,
+            //         -riggedPose.LeftUpperArm.y * 1.5,
+            //         riggedPose.LeftUpperArm.z
+            //     ).normalize();
+            //     const leftArmRotation = Quaternion.FromEulerAngles(
+            //         riggedPose.RightUpperArm.x * 1.2,
+            //         -riggedPose.RightUpperArm.y * 1.5,
+            //         riggedPose.RightUpperArm.z
+            //     ).normalize();
+            //     const rightElbowRotation = Quaternion.FromEulerAngles(
+            //         riggedPose.LeftLowerArm.x,
+            //         riggedPose.LeftLowerArm.y * 1.5,
+            //         riggedPose.LeftLowerArm.z * 1.5
+            //     ).negate().normalize();
+            //     const leftElbowRotation = Quaternion.FromEulerAngles(
+            //         riggedPose.RightLowerArm.x,
+            //         riggedPose.RightLowerArm.y * 1.5,
+            //         riggedPose.RightLowerArm.z * 1.5
+            //     ).negate().normalize();
+            //     this.setRotation(MMDModelBones.LeftArm, leftArmRotation);
+            //     this.setRotation(MMDModelBones.LeftElbow, leftElbowRotation);
+            //     this.setRotation(MMDModelBones.RightElbow, rightElbowRotation);
+            //     this.setRotation(MMDModelBones.RightArm, rightArmRotation);
+            //     //this.setRotation(MMDModelBones.RightElbow, rightElbowRotation);
+            // }
         }
         this.keyframes.push({
             keyNum: this.keyframes.length + 1,
@@ -458,36 +489,12 @@ export class MotionModel {
 
     // Обновленная функция для морфов лица
     private updateFacialExpressionsOld(face: Kalidokit.TFace) {
-        if (!this._Model) return;
+        if (!this._Model || !face || !face?.mouth) return;
         // あ - a
         // い - i
         // う - u
         // え - e
         // お - o
-        // const lerp = Kalidokit.Vector.lerp
-
-        // const lerpMotionWeight = (shapeNum: number, morphName: string) => {
-        //     return lerp(
-        //         shapeNum,
-        //         this._Model.morph.getMorphWeight(morphName),
-        //         .3
-        //     )
-        // }
-
-        // const morphs: { [key: string]: number } = {
-        //     "あ": lerpMotionWeight(face.mouth.shape.A / 0.8, "あ"),
-        //     "い": lerpMotionWeight(face.mouth.shape.I / 0.8, "い"),
-        //     "う": lerpMotionWeight(face.mouth.shape.U / 0.8, "う"),
-        //     "え": lerpMotionWeight(face.mouth.shape.E / 0.8, "え"),
-        //     "お": lerpMotionWeight(face.mouth.shape.U / 0.8, "お"),
-        //     //"にやり": clamp(face.mouth.shape.X * 0.8, 0, 1),
-        //     "まばたき": clamp(1 - face.eye.l, 0, 1),
-        //     "まばたき右": clamp(1 - face.eye.r, 0, 1)
-        // };
-
-        // Object.entries(morphs).forEach(([name, weight]) => {
-        //     this._Model?.morph.setMorphWeight(name, weight);
-        // });
 
         const lerpMotionWeight = (value: number, morphName: string): number => {
             const current = this._Model!.morph.getMorphWeight(morphName);
@@ -496,38 +503,38 @@ export class MotionModel {
 
         // Базовые формы рта
         const mouthShapes = {
-            "あ": face.mouth.shape.A,
-            "い": face.mouth.shape.I,
-            "う": face.mouth.shape.U,
-            "え": face.mouth.shape.E,
-            "お": face.mouth.shape.O
+            "あ": face.mouth?.shape?.A ?? 0,
+            "い": face.mouth?.shape?.I ?? 0,
+            "う": face.mouth?.shape?.U ?? 0,
+            "え": face.mouth?.shape?.E ?? 0,
+            "お": face.mouth?.shape?.O ?? 0
         };
 
         // Эмоциональные морфы
         const emotionMorphs = {
             // Глаза и брови
-            "困る": lerpMotionWeight(face.brow * 0.7, "困る"), // Грусть через общий параметр бровей
-            "怒り": lerpMotionWeight((1 - face.brow) * 0.8, "怒り"), // Злость через опущенные брови
+            "困る": lerpMotionWeight((face.brow ?? 0) * 0.7, "困る"), // Грусть через общий параметр бровей
+            "怒り": lerpMotionWeight((1 - (face.brow ?? 0)) * 0.8, "怒り"), // Злость через опущенные брови
 
             // Выражения глаз
-            "瞑り右": lerpMotionWeight(1 - face.eye.r, "瞑り右"),
-            "瞑り左": lerpMotionWeight(1 - face.eye.l, "瞑り左"),
+            "瞑り右": lerpMotionWeight(1 - (face.eye?.r ?? 0), "瞑り右"),
+            "瞑り左": lerpMotionWeight(1 - (face.eye?.l ?? 0), "瞑り左"),
 
             // Голова
-            "首横": lerpMotionWeight(face.head.degrees.x * 0.02, "首横"),
-            "首縦": lerpMotionWeight(face.head.degrees.y * 0.03, "首縦")
+            "首横": lerpMotionWeight((face.head?.degrees?.x ?? 0) * 0.02, "首横"),
+            "首縦": lerpMotionWeight((face.head?.degrees?.y ?? 0) * 0.03, "首縦")
         };
 
         // Комбинированные морфы
         const morphs = {
             ...mouthShapes,
             ...emotionMorphs,
-            "まばたき": lerpMotionWeight(1 - face.eye.l, "まばたき"),
-            "まばたき右": lerpMotionWeight(1 - face.eye.r, "まばたき右"),
+            "まばたき": lerpMotionWeight(1 - (face.eye?.l ?? 0), "まばたき"),
+            "まばたき右": lerpMotionWeight(1 - (face.eye?.r ?? 0), "まばたき右"),
 
             // Специальные комбинации
             "笑い": lerpMotionWeight(
-                (face.mouth.shape.I + face.mouth.shape.U) * 0.6 - 0.2,
+                ((face.mouth?.shape?.I ?? 0) + (face.mouth?.shape?.U ?? 0)) * 0.6 - 0.2,
                 "笑い"
             )
         };
@@ -690,7 +697,7 @@ export class MotionModel {
             hipsWorldPosition.z * 0.8 // Уменьшаем движение по Z
         );
         const smoothingFactor = Math.min(this.CONFIG.LERP_FACTOR, 0.2);
-        console.log(`Main Body: x: ${mmdPosition.x} y: ${mmdPosition.y} ${mmdPosition.z}`)
+       
         rootBone.position = Vector3.Lerp(
             rootBone.position,
             mmdPosition,
@@ -942,8 +949,12 @@ export class MotionModel {
         Matrix.FromQuaternionToRef(lowerArmRotation, lowerArmRotationMatrix)
         const localWristDir = Vector3.TransformNormal(wristDir, lowerArmRotationMatrix.invert())
         const defaultDir = new Vector3(!isRight ? 1 : -1, -1, 0).normalize()
-        return Quaternion.FromUnitVectorsToRef(defaultDir, localWristDir, new Quaternion())
-
+        let baseQuat = Quaternion.FromUnitVectorsToRef(defaultDir, localWristDir, new Quaternion())
+        // Дополнительный разворот кисти наружу
+        const outwardAngle = (isRight ? -1 : 1) * (Math.PI / 4); // 45 градусов, противоположное направление
+        const outwardAxis = new Vector3(0, 0, 1); // Z — наружу для кисти
+        const outwardQuat = Quaternion.RotationAxis(outwardAxis, outwardAngle);
+        return outwardQuat.multiply(baseQuat).normalize();
     }
     private calculateElbowRotation(
         upperBodyRotation: Quaternion,
@@ -1351,7 +1362,7 @@ export class MotionModel {
                 .sort((a, b) => {
                     // Сортировка по иерархии суставов пальцев (от основания к кончику)
                     const aHasJoint1 = a[0].includes("１");
-                    const aHasJoint2 = a[0].includes("２");
+                    const aHasJoint2 = a[0].includes("２"); 
                     const aHasJoint3 = a[0].includes("３");
                     const bHasJoint1 = b[0].includes("１");
                     const bHasJoint2 = b[0].includes("２");

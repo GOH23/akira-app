@@ -1,0 +1,137 @@
+{
+  "header": {
+    "appTitle": "Application",
+    "button": {
+      "addScene": "Ajouter une scène",
+      "webOpen": "Ouvrir la version web",
+      "deleteScene": "Supprimer la scène"
+    },
+    "menu1": "Scènes",
+    "menu2": "Paramètres",
+    "scenes": "Scènes",
+    "toggleTheme": "Changer de thème",
+    "deleteSceneConfirm": "Supprimer la scène"
+  },
+  "mainPage": {
+    "modal": {
+      "name1": "Titre",
+      "name2": "Auteur",
+      "name3": "Statut",
+      "name4": "Créé"
+    },
+    "NewTitle": "Actualités",
+    "SocialTitle": "Réseaux sociaux",
+    "SupportMe": "Soutenez-moi",
+    "GithubButton": "Mettre une étoile sur GitHub",
+    "SelectButtonNew": {
+      "webName": "Web",
+      "desktopName": "Application"
+    }
+  },
+  "scenePage": {
+    "MotionCaptureSettings": {
+      "title": "Paramètres de capture de mouvement",
+      "settingTitle": "Bouger le corps",
+      "settingTitle2": "Bouger les jambes",
+      "settingTitle3": "Bouger les bras",
+      "settingTitle4": "Bouger la tête",
+      "settingTitle5": "Calculer le visage et les yeux",
+      "settingTitle6": "Calcul Holistic & Kalidokit"
+    },
+    "MaterialsControl": {
+      "title": "Matériaux",
+      "title1": "Nom",
+      "stat1": "Visibilité"
+    },
+    "AnimationControl": {
+      "title": "Panneau de contrôle d'animation",
+      "table": {
+        "title1": "Image clé",
+        "title2": "Os",
+        "title3": "Morphs",
+        "title4": "Action"
+      },
+      "buttons": {
+        "buttonTitle1": "Exporter en GLTF",
+        "buttonTitle2": "Exporter en VMD",
+        "buttonTitle3": "Effacer les données des images clés",
+        "buttonTitle4": "Appliquer"
+      }
+    },
+    "Tutor": {
+      "Settings": {
+        "title": "Panneau de paramètres",
+        "description": "Ici, vous pouvez configurer la capture du corps entier à l'aide de la vidéo, ainsi que la position statique sur l'axe Y"
+      },
+      "SelectVideo": {
+        "title": "Panneau de sélection vidéo",
+        "description": "Ici, vous pouvez télécharger n'importe quelle vidéo pour extraire une animation de danse d'une personne, ainsi qu'ajuster les paramètres audio"
+      },
+      "AnimationControlUi": {
+        "title": "Panneau de contrôle des images clés enregistrées",
+        "description": "Ici, vous pouvez gérer les images capturées et les exporter aux formats VMD/glTF"
+      },
+      "FullScreen": {
+        "title": "Mode plein écran de l'application",
+        "description": "Passe l'application en mode plein écran"
+      },
+      "MaterialsButton": {
+        "title": "Panneau de gestion des vêtements du personnage",
+        "description": "Ici, vous pouvez ajuster la visibilité des vêtements du modèle"
+      }
+    },
+    "VariableSettings": {
+      "title": "Variables",
+      "settingTitle": "Échelle de pose"
+    },
+    "ModalTitle": "Sélectionner une vidéo",
+    "FileUpload": "Charger un fichier vidéo",
+    "RecordVideo": "Enregistrer une vidéo"
+  },
+  "settingsModal": {
+    "title": "Paramètres",
+    "titleLang": "Langue sélectionnée",
+    "titleSelectModel": "Modèle sélectionné",
+    "titleSceneName": "Nom de la scène",
+    "buttons": {
+      "cancelButton": "Annuler",
+      "submitButton": "Enregistrer",
+      "selectModel": "Sélectionner un modèle",
+      "addModel": "Ajouter un modèle"
+    }
+  },
+  "messages": {
+    "deleteMessage": "Voulez-vous supprimer la scène sélectionnée ?"
+  },
+  "notifications": {
+    "sceneAdded": "Scène ajoutée",
+    "sceneAddedDesc": "Nouvelle scène créée avec succès",
+    "maxScenesReached": "Nombre maximum de scènes atteint",
+    "maxScenesReachedDesc": "Le nombre maximum de scènes est de 10",
+    "settingsSaved": "Paramètres enregistrés",
+    "settingsSavedDesc": "Les paramètres de la scène ont été mis à jour avec succès"
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "validation": {
+    "sceneNameRequired": "Veuillez entrer le nom de la scène",
+    "modelRequired": "Veuillez sélectionner un modèle"
+  },
+  "controlPanel": {
+    "video": "Vidéo",
+    "settings": "Paramètres",
+    "export": "Exporter",
+    "skeleton": "Squelette",
+    "assistant": "Assistant"
+  },
+  "aiDrawer": {
+    "title": "Assistant IA",
+    "thinking": "L'IA réfléchit...",
+    "reasoning": "Raisonnement de l'IA",
+    "audioOutput": "Sortie audio",
+    "inputPlaceholder": "Entrez un message et appuyez sur Entrée",
+    "error": "Erreur lors de la réception de la réponse de l'IA"
+  }
+} 

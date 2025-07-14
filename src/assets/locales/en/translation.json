@@ -7,7 +7,10 @@
             "deleteScene": "Delete scene"
         },
         "menu1": "Scenes",
-        "menu2": "Settings"
+        "menu2": "Settings",
+        "scenes": "Scenes",
+        "toggleTheme": "Toggle theme",
+        "deleteSceneConfirm": "Delete scene"
     },
     "mainPage": {
         "modal": {
@@ -99,5 +102,59 @@
     },
     "messages": {
         "deleteMessage": "You want to delete selected scene?"
+    },
+    "notifications": {
+        "sceneAdded": "Scene added",
+        "sceneAddedDesc": "New scene has been created successfully",
+        "maxScenesReached": "Maximum scenes reached",
+        "maxScenesReachedDesc": "Maximum number of scenes is 10",
+        "settingsSaved": "Settings saved",
+        "settingsSavedDesc": "Scene settings have been updated successfully"
+    },
+    "common": {
+        "yes": "Yes",
+        "no": "No"
+    },
+    "validation": {
+        "sceneNameRequired": "Please enter scene name",
+        "modelRequired": "Please select a model"
+    },
+    "controlPanel": {
+        "video": "Video",
+        "settings": "Settings",
+        "export": "Export",
+        "skeleton": "Skeleton",
+        "assistant": "Assistant"
+    },
+    "aiDrawer": {
+        "title": "AI Assistant",
+        "thinking": "AI is thinking...",
+        "reasoning": "AI reasoning",
+        "audioOutput": "Audio output",
+        "inputPlaceholder": "Enter a message and press Enter",
+        "error": "Error receiving response from AI"
+    },
+    "guide": {
+        "title": "AI Assistant & Ollama Guide",
+        "howToUseTitle": "🧑‍💻 How to Use the Neural Network (AI Assistant)",
+        "howToUseStep1": "Open the AI Assistant (chat icon or 'AI Assistant' drawer).",
+        "howToUseStep2": "Type your message and send.",
+        "howToUseStep3": "Akira will respond using the selected LLM model, trigger animation and voice.",
+        "howToUseStep4": "Change language in settings for multilingual answers.",
+        "howToUseStep5": "Enable/disable audio output in the chat footer.",
+        "note": "Note:",
+        "noteText": "For the AI Assistant to work, you must have a local Ollama server running with a compatible LLM model installed (see below).",
+        "ollamaTitle": "🤖 How to Install and Use Ollama",
+        "ollamaStep1": "Go to https://ollama.com/download and install for your OS.",
+        "ollamaStep2": "Run ollama serve (or launch from Start menu on Windows).",
+        "ollamaStep3": "Pull a model: ollama pull llama3 (or another from Ollama Library).",
+        "ollamaStep4": "In Akira, open Settings → Ollama Host, set to http://localhost:11434 (default), and select your model.",
+        "ollamaStep5": "Open the AI Assistant and start chatting!",
+        "troubleshootingTitle": "❓ Troubleshooting",
+        "troubleshooting1": "If you see errors like 'Failed to connect to Ollama' or 'No models found':",
+        "troubleshooting2": "Make sure Ollama is running and accessible at the configured host.",
+        "troubleshooting3": "Ensure you have pulled at least one model (e.g., ollama pull llama3).",
+        "troubleshooting4": "Check firewall/antivirus settings if running on Windows.",
+        "moreHelp": "For more help, see the Ollama documentation or open an issue in this repository."
     }
 }

@@ -6,7 +6,7 @@ import { AbstractMesh, AssetContainer, Color3, CreateGround, DirectionalLight, E
 import { MmdModel, MmdPhysics, MmdRuntime, MmdStandardMaterialBuilder, SdefInjector } from 'babylon-mmd'
 import { AkiraButton } from './Elements/AkiraButton'
 import { ArrowsAltOutlined, EyeInvisibleOutlined, EyeOutlined, MutedOutlined, PauseOutlined, PlayCircleOutlined, QuestionOutlined, SettingFilled, SkinOutlined, SoundOutlined, TableOutlined, VideoCameraFilled } from '@ant-design/icons'
-
+import { Inspector } from '@babylonjs/inspector';
 import { AkiraDrawer } from "./Elements/AkiraDrawer";
 import { FilesetResolver, HolisticLandmarker } from "@mediapipe/tasks-vision";
 import { SkeletonShow } from "./logic/Skeleton";
@@ -22,7 +22,21 @@ import { AnimationControlUi } from './Elements/ControlModelAnimation/AnimationCo
 import { getSteps } from './logic/helperTour'
 import { Holistic } from '@mediapipe/holistic'
 
-
+import * as Kalidokit from 'kalidokit';
+import { ControlPanel } from './Elements/ControlPanel'
+import { AIAkiraDrawer } from './logic/LLM/AIAkiraDrawer'
+export type DrawerStatesType = {
+    VideoDrawerOpened: boolean,
+    SettingsDrawerOpened: boolean,
+    SkeletonModelOpened: boolean,
+    ExportOpened: boolean,
+    AssistantOpened: boolean
+}
+export type VideoState = {
+    isPlaying: boolean,
+    SkeletonPlaced: boolean,
+    SoundEnabled: boolean
+}
 
 export default function ScenePage() {
 
@@ -31,18 +45,16 @@ export default function ScenePage() {
     const sceneId = searchParams.get('sceneId')
     const scenes = useScenes((state) => state.scenes);
     const [scene, setScene] = useState<ScenesType>();
-    const [DrawerStates, setOpen] = useState<{
-        VideoDrawerOpened: boolean,
-        SettingsDrawerOpened: boolean,
-        SkeletonModelOpened: boolean,
-    }>({
+    const [DrawerStates, setOpen] = useState<DrawerStatesType>({
         VideoDrawerOpened: false,
         SettingsDrawerOpened: false,
-        SkeletonModelOpened: false
+        SkeletonModelOpened: false,
+        ExportOpened: false,
+        AssistantOpened: false
     });
     const { GetModelData } = useSavedModel((state) => state);
-    function OpenDrawer(selected: keyof typeof DrawerStates, value: boolean) {
-        const newState: typeof DrawerStates = {
+    function OpenDrawer(selected: keyof DrawerStatesType, value: boolean) {
+        const newState: DrawerStatesType = {
             ...DrawerStates,
         }
         newState[selected] = value;
@@ -52,12 +64,8 @@ export default function ScenePage() {
     //video
     const VideoCurrentRef = useRef<HTMLVideoElement>(null)
     const SkeletonCanvasRef = useRef<HTMLCanvasElement>(null);
-    type videoState = {
-        isPlaying: boolean,
-        SkeletonPlaced: boolean,
-        SoundEnabled: boolean
-    }
-    const [VideoState, SetVideoState] = useState<videoState>({
+
+    const [VideoState, SetVideoState] = useState<VideoState>({
         isPlaying: false,
         SkeletonPlaced: true,
         SoundEnabled: true
@@ -71,7 +79,7 @@ export default function ScenePage() {
     }
     //mediapipe with drawing
     const [SelectedOld, SetSelectedOld] = useState(false)
-    const [MotionCap, SetMotionCap] = useState(new MotionModel())
+    const [MotionCap] = useState(new MotionModel())
     const HolisticRef = useRef<HolisticLandmarker>(null)
     const HolisticOldRef = useRef<Holistic>(new Holistic({
         locateFile: (file) => {
@@ -87,20 +95,26 @@ export default function ScenePage() {
     })
     const [OnHolisticLoaded, SetHolisticLoaded] = useState(false)
     const loadHolistic = async () => {
-        return FilesetResolver.forVisionTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-        ).then(async vision => {
-            const holisticLandmarker = await HolisticLandmarker.createFromOptions(vision, {
-                baseOptions: {
-                    modelAssetPath:
-                        "https://storage.googleapis.com/mediapipe-models/holistic_landmarker/holistic_landmarker/float16/latest/holistic_landmarker.task",
-                    delegate: "GPU",
-                },
-                runningMode: "VIDEO",
-            })
+        try {
 
-            HolisticRef.current = holisticLandmarker;
-        })
+            FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.15/wasm").then(
+                async (vision) => {
+                    HolisticRef.current = await HolisticLandmarker.createFromOptions(vision, {
+                        baseOptions: {
+                            modelAssetPath:
+                                "https://storage.googleapis.com/mediapipe-models/holistic_landmarker/holistic_landmarker/float16/latest/holistic_landmarker.task",
+                            delegate: "GPU",
+                        },
+
+                        runningMode: "VIDEO",
+                    })
+
+                })
+
+        } catch (err) {
+            console.log(err)
+        }
+
     }
     const runAnimation = async () => {
         if (!SelectedOld && HolisticRef.current && VideoCurrentRef.current && !VideoCurrentRef.current.paused && VideoCurrentRef.current.readyState >= 2) {
@@ -123,22 +137,13 @@ export default function ScenePage() {
         requestAnimationFrame(runAnimation)
     }
     useEffect(() => {
-        loadHolistic();
+        loadHolistic()
     }, [])
 
     useEffect(() => {
-        if (HolisticRef.current && HolisticOldRef.current) {
+        if (HolisticRef.current) {
             console.log("Holistic loaded");
-            HolisticOldRef.current.initialize().then(() => {
-                HolisticOldRef.current.onResults((results) => {
-                    if (VideoState.SkeletonPlaced) {
-                        SkeletonShow.onOldShowSkeleton(SkeletonCanvasRef, results)
-                    }
-                    MotionCap.motionOldCalculate(results as any, VideoCurrentRef.current)
-                    SetKeyFrames(MotionCap.keyframes)
-                });
-                SetHolisticLoaded(true)
-            })
+            SetHolisticLoaded(true)
 
         }
 
@@ -163,19 +168,54 @@ export default function ScenePage() {
         MMDAssetContainer?: AssetContainer
         MMDShadowManager?: ShadowGenerator
     }>({})
-    //Tutor Refs 
-    const [OpenTutor, SetOpenTutor] = useState(false)
-    const button1Ref = useRef<GetRef<any>>(null)
-    const button2Ref = useRef<GetRef<any>>(null)
-    const button3Ref = useRef<GetRef<any>>(null)
-    const button56Ref = useRef<GetRef<any>>(null)
-    const button5Ref = useRef<GetRef<any>>(null)
+
     //Controls
-    const [animationControlDrawer, setAnimationControlDrawer] = useState(false);
-    const [materialsDrawer, setmaterialsDrawer] = useState(false);
     const Materials = useMemo(() => MMDStates.MMDModel?.mesh.metadata.meshes || [], [MMDStates.MMDModel])
     const [MaterialBuilder, _] = useState(new MmdStandardMaterialBuilder())
     const convRef = useRef<HTMLCanvasElement>(null)
+
+    // Add new state for video position
+    const [videoPosition, setVideoPosition] = useState({ x: 16, y: 16 }); // Default position (top-right)
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+    const handleDragStart = (e: React.MouseEvent) => {
+        const videoContainer = e.currentTarget.getBoundingClientRect();
+        setDragOffset({
+            x: e.clientX - videoContainer.left, // Убрано деление на 5
+            y: e.clientY - videoContainer.top
+        });
+        setIsDragging(true);
+    };
+    useEffect(() => {
+        const handleMouseMove = (e: any) => {
+            if (!isDragging) return;
+
+            const videoContainer = document.querySelector('.video-container')?.getBoundingClientRect();
+            if (!videoContainer) return;
+
+            const maxX = window.innerWidth - videoContainer.width;
+            const maxY = window.innerHeight - videoContainer.height;
+
+            let newX = e.clientX - dragOffset.x;
+            let newY = e.clientY - dragOffset.y;
+
+            newX = Math.max(0, Math.min(newX, maxX));
+            newY = Math.max(0, Math.min(newY, maxY));
+
+            setVideoPosition({ x: newX, y: newY });
+        };
+
+        const handleMouseUp = () => setIsDragging(false);
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, dragOffset]);
 
     const loadModel = async (
         eng: Engine,
@@ -212,7 +252,7 @@ export default function ScenePage() {
             modelUrl,
             modelScene,
             {
-                rootUrl: IsUUID(modelName) ? undefined : `${window.location.origin}/assets/models/`,
+                rootUrl: IsUUID(modelName) ? undefined : `../assets/models/`,
                 pluginExtension: IsUUID(modelName) ? ".bpmx" : undefined,
                 onProgress: (event) => {
                     eng.loadingUIText = `\n\n\nLoading model... ${event.loaded}/${event.total} 
@@ -261,7 +301,10 @@ export default function ScenePage() {
             audioEngine: false,
         }, true);
         const mmdscene = new Scene(engine);
-        mmdscene.enablePhysics(new Vector3(0, -9.8 * 10, 0), new HavokPlugin(true, window.havokPlugin))
+        if (window.havokPlugin)
+            mmdscene.enablePhysics(new Vector3(0, -9.8 * 10, 0), new HavokPlugin(false, window.havokPlugin))
+        Inspector._SetNewScene(mmdscene)
+
 
         SdefInjector.OverrideEngineCreateEffect(engine);
         MaterialBuilder.loadOutlineRenderingProperties = (): void => { /* do nothing */ };
@@ -275,7 +318,7 @@ export default function ScenePage() {
         camera.attachControl(true);
         // const camera = new ArcRotateCamera("Camera", -1.6, 1, 50, Vector3.Zero(), mmdscene);
         // camera.attachControl(convRef.current, true);
-        const mmdRuntime = new MmdRuntime(mmdscene, new MmdPhysics(mmdscene));
+        const mmdRuntime = new MmdRuntime(mmdscene, window.havokPlugin ? new MmdPhysics(mmdscene) : null);
         mmdRuntime.register(mmdscene)
 
         const hemisphericLight = new HemisphericLight("HemisphericLight", new Vector3(0, 1, 0), mmdscene);
@@ -308,7 +351,7 @@ export default function ScenePage() {
 
         mmdscene.onAfterRenderObservable.addOnce(() => engine.hideLoadingUI());
         if (scene) {
-            Promise.all([loadModel(engine, mmdscene, scene.modelPathOrLink, mmdRuntime, shadowGenerator)]).then(([res]) => {
+            Promise.all([loadModel(engine, mmdscene, scene.modelPathOrLink, mmdRuntime, shadowGenerator), mmdscene.debugLayer.show()]).then(([res, debugLayer]) => {
                 SetMMDStates({
                     MMDRuntime: mmdRuntime,
                     MMDScene: mmdscene,
@@ -316,7 +359,9 @@ export default function ScenePage() {
                     MMDModel: mmdRuntime.createMmdModel(res.Model),
                     MMDAssetContainer: res.AssetContainer,
                     MMDShadowManager: shadowGenerator
-                })
+                });
+                debugLayer.popupSceneExplorer();
+                debugLayer.popupInspector();
             });
         }
 
@@ -366,151 +411,264 @@ export default function ScenePage() {
         setScene(scenes.find((el) => el.id == sceneId))
     }, [scenes, sceneId])
 
-    return (<div className="relative overflow-y-hidden">
-        <canvas ref={convRef} style={{ width: "100%", height: "100vh" }} className="" />
-        {/* Controls */}
-        <div className="absolute m-2 font-bold text-xl flex gap-x-2 right-0 top-0">
-            <AkiraButton ref={button1Ref} onClick={() => convRef.current?.requestFullscreen()}>
-                <ArrowsAltOutlined />
-            </AkiraButton>
-            <AkiraButton ref={button2Ref} onClick={() => OpenDrawer("VideoDrawerOpened", true)}>
-                <VideoCameraFilled />
-            </AkiraButton>
-            <AkiraButton ref={button3Ref} onClick={() => OpenDrawer("SettingsDrawerOpened", true)}>
-                <SettingFilled />
-            </AkiraButton>
-            <AkiraButton onClick={() => {
-                SetOpenTutor(true)
-            }}>
-                <QuestionOutlined />
-            </AkiraButton>
-        </div>
 
-        <div className="absolute m-2 font-bold text-xl flex gap-x-2 right-0 bottom-0">
-            <AkiraButton ref={button56Ref} onClick={() => { setmaterialsDrawer(!materialsDrawer) }}>
-                <SkinOutlined />
-            </AkiraButton>
-            <AkiraButton ref={button5Ref} onClick={() => { setAnimationControlDrawer(!animationControlDrawer) }}>
-                <TableOutlined />
-            </AkiraButton>
-        </div>
-        <AkiraDrawer removeBlurButton closable title="Settings" open={DrawerStates.SettingsDrawerOpened} onClose={() => { OpenDrawer("SettingsDrawerOpened", false) }} >
-            <p className='text-ForegroundColor text-lg text-center font-bold'>{t("scenePage.MotionCaptureSettings.title")}</p>
-            <div className='flex justify-around mb-3'>
 
-                <div className='flex flex-col text-base gap-y-3 text-ForegroundColor'>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle")}</p>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle2")}</p>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle3")}</p>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle4")}</p>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle5")}</p>
-                    <p>{t("scenePage.MotionCaptureSettings.settingTitle6")}</p>
-                </div>
-                <div className='flex gap-y-3 flex-col justify-center items-center'>
-                    {Object.keys(MotionCaptureSettings).map((el, ind) => <AkiraRadioButton
-                        key={ind}
-                        checked={MotionCaptureSettings[el as keyof MotionSettingsType]}
-                        onChange={() => {
+    return (
+        <div className="relative h-screen bg-gray-900">
+            <div className="absolute inset-0">
+                <canvas ref={convRef} className="w-full h-full" />
+            </div>
+            {/* Video container */}
+            <div
+                className="absolute w-80 video-container aspect-video bg-black rounded-xl overflow-hidden shadow-2xl cursor-move"
+                style={{
+                    transform: `translate(${videoPosition.x}px, ${videoPosition.y}px)`,
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 999,
+                    cursor: isDragging ? 'grabbing' : 'grab'
+                }}
+                onMouseDown={handleDragStart}
+            >
+                <div className="relative w-full h-full">
+                    {VideoState.SkeletonPlaced && (
+                        <div
+                            className="absolute w-full h-full pointer-events-none"
+                            style={{
 
-                            SetMotionCaptureSettings((prevState) => {
-                                var prevStates = { ...prevState };
-                                var elem = el as keyof MotionSettingsType;
-                                var newState = prevStates;
-                                newState[elem] = !prevStates[elem]
-                                return newState;
-                            })
+                                zIndex: 45
+                            }}
+                        >
+                            <canvas ref={SkeletonCanvasRef} className="w-full h-full" />
+                        </div>
+                    )}
+
+                    <video
+                        onPlay={() => {
+                            requestAnimationFrame(runAnimation)
                         }}
-                    />)}
-                    <AkiraRadioButton
-                        checked={SelectedOld}
-                        onChange={() => {
-                            SetSelectedOld(!SelectedOld)
-                        }}
+                        onPause={() => MotionCap.endRecordMp4()}
+                        ref={VideoCurrentRef}
+                        controls={false}
+                        className="w-full max-h-96 h-full object-contain"
+
+                        muted={!VideoState.SoundEnabled}
                     />
-                </div>
-            </div>
-            <p className='text-ForegroundColor text-lg text-center font-bold'>{t("scenePage.VariableSettings.title")}</p>
-            <div className='flex justify-around mb-3'>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <button
+                                    id="isPlaying"
+                                    onClick={onClicked}
+                                    className="text-white hover:text-purple-400 transition-colors"
+                                >
+                                    {VideoState.isPlaying ?
+                                        <PauseOutlined className="text-2xl" /> :
+                                        <PlayCircleOutlined className="text-2xl" />
+                                    }
+                                </button>
 
-                <div className='flex flex-col text-base gap-y-3 text-ForegroundColor'>
-                    <p>{t("scenePage.VariableSettings.settingTitle")}</p>
-                </div>
-                <div className='flex gap-y-3 flex-col justify-center items-center'>
-                    <InputNumber type="number" controls onChange={(value) => {
-                        if (value) {
-                            SetSETTINGS_CONFIG({
-                                ...SETTINGS_CONFIG,
-                                POSE_Y_SCALE: value
-                            })
-                        }
-                    }} value={SETTINGS_CONFIG.POSE_Y_SCALE} />
-                </div>
-            </div>
-        </AkiraDrawer>
-        {/* Motion Video */}
-        <AkiraDrawer removeBlurButton closable title={t("scenePage.ModalTitle")} open={DrawerStates.VideoDrawerOpened} onClose={() => { OpenDrawer("VideoDrawerOpened", false) }} loading={!OnHolisticLoaded}>
-            <AkiraButton className="w-full p-0">
-                <div className="w-full">
-                    <label htmlFor="file" className='cursor-pointer text-white flex justify-center items-center h-[25px] w-full'>{t("scenePage.FileUpload")}</label>
-                    <input id="file" type="file" className="hidden" accept="video/*" onChange={async (event) => {
-                        const file = event.target.files![0]
-                        const url = URL.createObjectURL(file);
-                        VideoCurrentRef.current!.src = url;
-                        requestAnimationFrame(runAnimation)
-                    }} />
-                </div>
-            </AkiraButton>
-            <div className='flex m-1 justify-center'>
-                <div className="w-fit relative">
-                    {/* `${window.location.origin}/assets/models/` */}
-                    <video onPlay={() => {
-                        requestAnimationFrame(runAnimation)
-                    }} onPause={() => MotionCap.endRecordMp4()} muted={VideoState.SoundEnabled} ref={VideoCurrentRef} controls={false} className="rounded-md max-h-[400px] w-full min-h-[200px]" />
-                    <canvas ref={SkeletonCanvasRef} className={`${VideoState.SkeletonPlaced ? "absolute" : "hidden"} top-0 h-full w-full`} />
-                </div>
-            </div>
-            <div className="flex justify-around text-[20px]">
-                <button id="isPlaying" className="p-2 font-bold cursor-pointer hover:bg-BackgroundHoverButton flex duration-700 justify-center items-center aspect-square rounded bg-BackgroundButton text-white" onClick={onClicked}>
-                    {VideoState.isPlaying ? <PlayCircleOutlined /> : <PauseOutlined />}
-                </button>
-                <button id="SkeletonPlaced" className="p-2 font-bold cursor-pointer  hover:bg-BackgroundHoverButton duration-700 flex justify-center items-center aspect-square rounded bg-BackgroundButton text-white" onClick={onClicked}>
-                    {VideoState.SkeletonPlaced ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                </button>
-                <button id="SoundEnabled" className="p-2 font-bold cursor-pointer  hover:bg-BackgroundHoverButton duration-700 flex justify-center items-center aspect-square rounded bg-BackgroundButton text-white" onClick={onClicked}>
-                    {!VideoState.SoundEnabled ? <SoundOutlined /> : <MutedOutlined />}
-                </button>
+                                <button
+                                    id="SkeletonPlaced"
+                                    onClick={onClicked}
+                                    className={`transition-colors ${VideoState.SkeletonPlaced ? 'text-purple-400' : 'text-white hover:text-purple-400'}`}
+                                >
+                                    {VideoState.SkeletonPlaced ?
+                                        <EyeOutlined className="text-2xl" /> :
+                                        <EyeInvisibleOutlined className="text-2xl" />
+                                    }
+                                </button>
 
+                                <button
+                                    id="SoundEnabled"
+                                    onClick={onClicked}
+                                    className={`transition-colors ${VideoState.SoundEnabled ? 'text-purple-400' : 'text-white hover:text-purple-400'}`}
+                                >
+                                    {VideoState.SoundEnabled ?
+                                        <SoundOutlined className="text-2xl" /> :
+                                        <MutedOutlined className="text-2xl" />
+                                    }
+                                </button>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-white text-sm">
+                                    {VideoCurrentRef.current?.currentTime ?
+                                        `${Math.floor(VideoCurrentRef.current.currentTime / 60)}:${Math.floor(VideoCurrentRef.current.currentTime % 60).toString().padStart(2, '0')}` :
+                                        '0:00'
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className='mt-2 flex flex-col gap-y-2'>
-                <AkiraButton className="w-full" onClick={() => {
-                    if (VideoCurrentRef.current && VideoCurrentRef.current.src)
-                        MotionCap.startRecordMp4(VideoCurrentRef.current)
-                }}>
-                    {t("scenePage.RecordVideo")}
+
+            {/* Control panel */}
+            <ControlPanel onOpenDrawer={OpenDrawer} />
+            <AkiraDrawer
+                title={t("scenePage.ModalTitle")}
+                placement="right"
+                onClose={() => OpenDrawer('VideoDrawerOpened', false)}
+                open={DrawerStates.VideoDrawerOpened}
+                loading={!OnHolisticLoaded}
+            >
+                <AkiraButton className="w-full p-0">
+                    <div className="w-full">
+                        <label htmlFor="file" className='cursor-pointer flex justify-center items-center h-[25px] w-full'>
+                            {t("scenePage.FileUpload")}
+                        </label>
+                        <input
+                            id="file"
+                            type="file"
+                            className="hidden"
+                            accept="video/*"
+                            onChange={async (event) => {
+                                const file = event.target.files![0]
+                                const url = URL.createObjectURL(file);
+                                VideoCurrentRef.current!.src = url;
+                                requestAnimationFrame(runAnimation)
+                            }}
+                        />
+                    </div>
                 </AkiraButton>
 
-            </div>
+                <div className='mt-2 flex flex-col gap-y-2'>
+                    <AkiraButton
+                        className="w-full"
+                        onClick={async () => {
+                            const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
+                            if (hasGetUserMedia()) {
+                                try {
+                                    const stream = await navigator.mediaDevices.getUserMedia({
+                                        video: {
+                                            width: 640,
+                                            height: 480,
+                                            facingMode: "user"
+                                        }
+                                    });
 
-        </AkiraDrawer>
-        <MaterialsDrawer
+                                    if (VideoCurrentRef.current) {
+                                        VideoCurrentRef.current.srcObject = stream;
+                                        await VideoCurrentRef.current.play();
 
-            title={t("scenePage.MaterialsControl.title")}
-            open={materialsDrawer}
+                                    }
+                                } catch (error) {
+                                    console.error('Error accessing camera:', error);
+                                }
+                            } else {
+                                console.error('getUserMedia is not supported in this browser');
+                            }
+                        }}
+                    >
+                        {t("scenePage.UseCamera")}
+                    </AkiraButton>
+                    {/* <AkiraButton
+                        className="w-full"
+                        onClick={() => {
+                            if (VideoCurrentRef.current && VideoCurrentRef.current.src)
+                                MotionCap.startRecordMp4(VideoCurrentRef.current)
+                        }}
+                    >
+                        {t("scenePage.RecordVideo")}
+                    </AkiraButton> */}
 
-            materials={Materials}
-            onClose={() => { setmaterialsDrawer(!materialsDrawer) }}
-        />
-        <AnimationControlUi
-            title={t("scenePage.AnimationControl.title")}
-            open={animationControlDrawer}
-            placement="bottom"
-            SetKeyFrames={SetKeyFrames}
-            onClose={() => { setAnimationControlDrawer(!animationControlDrawer) }}
-            KeyFrames={KeyFrames}
-            MotionModelInstance={MotionCap}
-        />
-        {/* Bugged Antd */}
-        <Tour open={OpenTutor} onClose={() => SetOpenTutor(false)} steps={getSteps(button1Ref.current, button3Ref.current, button2Ref.current, undefined, undefined)} />
+                </div>
+            </AkiraDrawer>
+            {MMDStates.MMDRuntime && MMDStates.MMDScene && <AIAkiraDrawer motionModel={MotionCap} mmdRuntime={MMDStates.MMDRuntime} mmdScene={MMDStates.MMDScene} DrawerStates={DrawerStates} OpenDrawer={OpenDrawer} />}
+            
+            <AkiraDrawer
+                title="Settings"
+                placement="right"
+                onClose={() => OpenDrawer('SettingsDrawerOpened', false)}
+                open={DrawerStates.SettingsDrawerOpened}
+            >
+                <p className='text-ForegroundColor text-lg text-center font-bold mb-4'>
+                    {t("scenePage.MotionCaptureSettings.title")}
+                </p>
+                <div className='flex justify-around mb-6'>
+                    <div className='flex flex-col text-base gap-y-3 text-ForegroundColor'>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle")}</p>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle2")}</p>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle3")}</p>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle4")}</p>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle5")}</p>
+                        <p>{t("scenePage.MotionCaptureSettings.settingTitle6")}</p>
+                    </div>
+                    <div className='flex gap-y-3 flex-col justify-center items-center'>
+                        {Object.keys(MotionCaptureSettings).map((el, ind) => (
+                            <AkiraRadioButton
+                                key={ind}
+                                checked={MotionCaptureSettings[el as keyof MotionSettingsType]}
+                                onChange={() => {
+                                    SetMotionCaptureSettings((prevState) => {
+                                        var prevStates = { ...prevState };
+                                        var elem = el as keyof MotionSettingsType;
+                                        var newState = prevStates;
+                                        newState[elem] = !prevStates[elem]
+                                        return newState;
+                                    })
+                                }}
+                            />
+                        ))}
+                        <AkiraRadioButton
+                            checked={SelectedOld}
+                            onChange={() => {
+                                SetSelectedOld(!SelectedOld)
+                            }}
+                        />
+                    </div>
+                </div>
+                <p className='text-ForegroundColor text-lg text-center font-bold mb-4'>
+                    {t("scenePage.VariableSettings.title")}
+                </p>
+                <div className='flex justify-around mb-3'>
+                    <div className='flex flex-col text-base gap-y-3 text-ForegroundColor'>
+                        <p>{t("scenePage.VariableSettings.settingTitle")}</p>
+                    </div>
+                    <div className='flex gap-y-3 flex-col justify-center items-center'>
+                        <InputNumber
+                            type="number"
+                            controls
+                            onChange={(value) => {
+                                if (value) {
+                                    SetSETTINGS_CONFIG({
+                                        ...SETTINGS_CONFIG,
+                                        POSE_Y_SCALE: value
+                                    })
+                                }
+                            }}
+                            value={SETTINGS_CONFIG.POSE_Y_SCALE}
+                        />
+                    </div>
+                </div>
+            </AkiraDrawer>
 
-    </div>)
+            {/* <AkiraDrawer
+                title={t("scenePage.MaterialsControl.title")}
+                placement="right"
+                onClose={() => OpenDrawer('SkeletonModelOpened', false)}
+                open={DrawerStates.SkeletonModelOpened}
+            >
+                <MaterialsDrawer
+                    materials={Materials}
+                    onClose={() => OpenDrawer('SkeletonModelOpened', false)}
+                />
+            </AkiraDrawer> */}
+
+            {/* Animation Control UI */}
+            <AnimationControlUi
+                title={t("scenePage.AnimationControl.title")}
+                open={DrawerStates.ExportOpened}
+                placement="bottom"
+                SetKeyFrames={SetKeyFrames}
+                onClose={() => OpenDrawer("ExportOpened", false)}
+                KeyFrames={KeyFrames}
+                MotionModelInstance={MotionCap}
+            />
+
+        </div>
+    );
 } 

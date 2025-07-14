@@ -7,7 +7,10 @@
             "deleteScene": "Удалить сцену"
         },
         "menu1": "Сцены",
-        "menu2": "Настройки"
+        "menu2": "Настройки",
+        "scenes": "Сцены",
+        "toggleTheme": "Сменить тему",
+        "deleteSceneConfirm": "Удалить сцену"
     },
     "mainPage": {
         "modal": {
@@ -18,8 +21,8 @@
         },
         "NewTitle": "Новости",
         "SocialTitle": "Соцсети",
-        "SupportMe": "Поддержать",
-        "GithubButton": "Звезда на GitHub",
+        "SupportMe": "Поддержать меня",
+        "GithubButton": "Поставить звезду на GitHub",
         "SelectButtonNew": {
             "webName": "Веб",
             "desktopName": "Приложение"
@@ -32,8 +35,8 @@
             "settingTitle2": "Движение ног",
             "settingTitle3": "Движение рук",
             "settingTitle4": "Движение головы",
-            "settingTitle5": "Расчет лица и глаз",
-            "settingTitle6": "Расчет Holistic&Kalidokit"
+            "settingTitle5": "Расчёт лица и глаз",
+            "settingTitle6": "Расчёт Holistic & Kalidokit"
         },
         "MaterialsControl": {
             "title": "Материалы",
@@ -49,32 +52,32 @@
                 "title4": "Действие"
             },
             "buttons": {
-                "buttonTitle1": "Экспорт в GLTF",
-                "buttonTitle2": "Экспорт в VMD",
-                "buttonTitle3": "Очистить ключевые кадры",
+                "buttonTitle1": "Экспортировать в GLTF",
+                "buttonTitle2": "Экспортировать в VMD",
+                "buttonTitle3": "Очистить данные ключевых кадров",
                 "buttonTitle4": "Применить"
             }
         },
         "Tutor": {
             "Settings": {
                 "title": "Панель настроек",
-                "description": "Настройка захвата всего тела через видео и статичной позиции по Y-оси"
+                "description": "Здесь вы можете настроить захват всего тела с помощью видео, а также статичную позицию по оси Y"
             },
             "SelectVideo": {
-                "title": "Выбор видео",
-                "description": "Загрузите видео для извлечения анимации танца и настройки звука"
+                "title": "Панель выбора видео",
+                "description": "Здесь вы можете загрузить любое видео для извлечения танцевальной анимации, а также настроить параметры аудио"
             },
             "AnimationControlUi": {
-                "title": "Управление ключевыми кадрами",
-                "description": "Управление кадрами и экспорт в VMD/glTF"
+                "title": "Панель управления записанными ключевыми кадрами",
+                "description": "Здесь вы можете управлять захваченными кадрами и экспортировать их в форматы VMD/glTF"
             },
             "FullScreen": {
-                "title": "Полноэкранный режим",
-                "description": "Переключение в полноэкранный режим"
+                "title": "Полноэкранный режим приложения",
+                "description": "Переключает приложение в полноэкранный режим"
             },
             "MaterialsButton": {
-                "title": "Управление одеждой",
-                "description": "Настройка видимости одежды модели"
+                "title": "Панель управления одеждой персонажа",
+                "description": "Здесь вы можете настроить видимость одежды модели"
             }
         },
         "VariableSettings": {
@@ -82,13 +85,13 @@
             "settingTitle": "Масштаб позы"
         },
         "ModalTitle": "Выбор видео",
-        "FileUpload": "Загрузить видео",
+        "FileUpload": "Загрузить видеофайл",
         "RecordVideo": "Записать видео"
     },
     "settingsModal": {
         "title": "Настройки",
-        "titleLang": "Язык",
-        "titleSelectModel": "Модель",
+        "titleLang": "Выбранный язык",
+        "titleSelectModel": "Выбранная модель",
         "titleSceneName": "Название сцены",
         "buttons": {
             "cancelButton": "Отмена",
@@ -98,6 +101,60 @@
         }
     },
     "messages": {
-        "deleteMessage": "Удалить выбранную сцену?"
+        "deleteMessage": "Вы действительно хотите удалить выбранную сцену?"
+    },
+    "notifications": {
+        "sceneAdded": "Сцена добавлена",
+        "sceneAddedDesc": "Новая сцена успешно создана",
+        "maxScenesReached": "Достигнут лимит сцен",
+        "maxScenesReachedDesc": "Максимальное количество сцен — 10",
+        "settingsSaved": "Настройки сохранены",
+        "settingsSavedDesc": "Настройки сцены успешно обновлены"
+    },
+    "common": {
+        "yes": "Да",
+        "no": "Нет"
+    },
+    "validation": {
+        "sceneNameRequired": "Пожалуйста, введите название сцены",
+        "modelRequired": "Пожалуйста, выберите модель"
+    },
+    "controlPanel": {
+        "video": "Видео",
+        "settings": "Настройки",
+        "export": "Экспорт",
+        "skeleton": "Скелет",
+        "assistant": "Ассистент"
+    },
+    "aiDrawer": {
+        "title": "AI-ассистент",
+        "thinking": "AI думает...",
+        "reasoning": "Обоснование AI",
+        "audioOutput": "Аудиовывод",
+        "inputPlaceholder": "Введите сообщение и нажмите Enter",
+        "error": "Ошибка получения ответа от AI"
+    },
+    "guide": {
+        "title": "Гайд по AI-ассистенту и Ollama",
+        "howToUseTitle": "🧑‍💻 Как использовать нейросеть (AI-ассистент)",
+        "howToUseStep1": "Откройте AI-ассистент (иконка чата или панель 'AI Assistant').",
+        "howToUseStep2": "Введите сообщение и отправьте.",
+        "howToUseStep3": "Акира ответит с помощью выбранной LLM-модели, а также может воспроизвести анимацию и голос.",
+        "howToUseStep4": "Меняйте язык в настройках для мультиязычных ответов.",
+        "howToUseStep5": "Включайте/выключайте озвучку внизу чата.",
+        "note": "Важно:",
+        "noteText": "Для работы AI-ассистента должен быть запущен локальный сервер Ollama с установленной моделью (см. ниже).",
+        "ollamaTitle": "🤖 Как установить и использовать Ollama",
+        "ollamaStep1": "Перейдите на https://ollama.com/download и установите Ollama для вашей ОС.",
+        "ollamaStep2": "Запустите ollama serve (или через меню Пуск на Windows).",
+        "ollamaStep3": "Скачайте модель: ollama pull llama3 (или другую из Ollama Library).",
+        "ollamaStep4": "В Akira откройте Настройки → Ollama Host, укажите http://localhost:11434 (по умолчанию), выберите модель.",
+        "ollamaStep5": "Откройте AI-ассистент и начните общение!",
+        "troubleshootingTitle": "❓ Решение проблем",
+        "troubleshooting1": "Если видите ошибки вроде 'Failed to connect to Ollama' или 'No models found':",
+        "troubleshooting2": "Убедитесь, что Ollama запущен и доступен по указанному адресу.",
+        "troubleshooting3": "Проверьте, что вы скачали хотя бы одну модель (например, ollama pull llama3).",
+        "troubleshooting4": "Проверьте настройки брандмауэра/антивируса (особенно на Windows).",
+        "moreHelp": "Для дополнительной помощи смотрите документацию Ollama или создайте issue в этом репозитории."
     }
 }

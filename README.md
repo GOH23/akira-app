@@ -59,3 +59,59 @@ npm start
 3. Optimal resolution: 1280x720 for real-time preview  
 4. Close background apps during capture sessions  
 5. Utilize GPU acceleration toggle in settings for complex scenes    
+
+---
+
+## 🧑‍💻 How to Use the Neural Network (AI Assistant)
+
+Akira-app features an integrated AI Assistant powered by local Large Language Models (LLMs) via [Ollama](https://ollama.com/). This allows you to chat with Akira, generate responses, and trigger character animations using natural language.
+
+### How to Use
+1. **Open the AI Assistant**: Click the AI icon or open the "AI Assistant" drawer in the app interface.
+2. **Type your message**: Enter your prompt or question in the chat input field.
+3. **Send**: Press Enter or click the send button. Akira will respond using the selected LLM model, and may trigger an animation and voice response.
+4. **Change Language**: The AI will reply in the language selected in the app settings (English, Russian, Japanese, Chinese).
+5. **Audio Output**: Enable or disable voice output using the toggle in the chat footer.
+
+> **Note:** For the AI Assistant to work, you must have a local Ollama server running with a compatible LLM model installed (see below).
+
+---
+
+## 🤖 How to Install and Use Ollama for Local LLM
+
+Ollama is a local LLM server that allows you to run models like Llama 3, Mistral, Gemma, and others on your own machine. Akira-app connects to Ollama to provide AI chat and animation features.
+
+### 1. Install Ollama
+- **Windows/macOS/Linux:**
+  - Go to [https://ollama.com/download](https://ollama.com/download) and download the installer for your OS.
+  - Follow the installation instructions for your platform.
+
+### 2. Run Ollama
+- After installation, start the Ollama server:
+  - **Windows:** Launch "Ollama" from the Start menu or run `ollama serve` in Command Prompt.
+  - **macOS/Linux:** Run `ollama serve` in Terminal.
+- By default, Ollama runs at `http://localhost:11434`.
+
+### 3. Pull a Model
+- In Terminal/Command Prompt, run:
+  ```bash
+  ollama pull llama3
+  ```
+  Or choose another supported model (see [Ollama models](https://ollama.com/library)).
+
+### 4. Configure Akira-app
+- In the app, open **Settings** > **Ollama Host** and ensure the URL matches your Ollama server (default: `http://localhost:11434`).
+- Select the desired model from the model dropdown.
+
+### 5. Start Using AI
+- Open the AI Assistant and start chatting!
+
+---
+
+## ❓ Troubleshooting
+- If you see errors like "Failed to connect to Ollama" or "No models found":
+  - Make sure Ollama is running and accessible at the configured host.
+  - Ensure you have pulled at least one model (e.g., `ollama pull llama3`).
+  - Check firewall/antivirus settings if running on Windows.
+
+For more help, see the [Ollama documentation](https://ollama.com/docs) or open an issue in this repository.

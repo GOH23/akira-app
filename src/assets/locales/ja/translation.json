@@ -99,5 +99,35 @@
     },
     "messages": {
         "deleteMessage": "選択したシーンを削除しますか？"
+    },
+    "controlPanel": {
+        "video": "ビデオ",
+        "settings": "設定",
+        "export": "エクスポート",
+        "skeleton": "スケルトン",
+        "assistant": "アシスタント"
+    },
+    "guide": {
+      "title": "AIアシスタントとOllamaガイド",
+      "howToUseTitle": "🧑‍💻 ニューラルネットワーク（AIアシスタント）の使い方",
+      "howToUseStep1": "AIアシスタント（チャットアイコンまたは'AI Assistant'パネル）を開く。",
+      "howToUseStep2": "メッセージを入力して送信。",
+      "howToUseStep3": "Akiraが選択したLLMモデルで返答し、アニメーションや音声を再生します。",
+      "howToUseStep4": "設定で言語を変更して多言語対応の返答を得る。",
+      "howToUseStep5": "チャット下部で音声出力をオン/オフできます。",
+      "note": "注意:",
+      "noteText": "AIアシスタントを利用するには、互換性のあるLLMモデルをインストールしたローカルOllamaサーバーが必要です（下記参照）。",
+      "ollamaTitle": "🤖 Ollamaのインストールと使い方",
+      "ollamaStep1": "https://ollama.com/download からOSに合ったOllamaをダウンロード・インストール。",
+      "ollamaStep2": "ollama serve を実行（Windowsはスタートメニューからも可）。",
+      "ollamaStep3": "モデルを取得: ollama pull llama3（またはOllama Libraryから他のモデル）。",
+      "ollamaStep4": "Akiraの設定→Ollama Hostで http://localhost:11434（デフォルト）を指定し、モデルを選択。",
+      "ollamaStep5": "AIアシスタントを開いてチャットを開始！",
+      "troubleshootingTitle": "❓ トラブルシューティング",
+      "troubleshooting1": "'Failed to connect to Ollama'や'No models found'などのエラーが出る場合:",
+      "troubleshooting2": "Ollamaが起動し、指定ホストでアクセス可能か確認。",
+      "troubleshooting3": "少なくとも1つモデルを取得しているか確認（例: ollama pull llama3）。",
+      "troubleshooting4": "Windowsの場合はファイアウォールやウイルス対策ソフトの設定を確認。",
+      "moreHelp": "詳細はOllamaドキュメント、またはこのリポジトリのissueをご参照ください。"
     }
 }

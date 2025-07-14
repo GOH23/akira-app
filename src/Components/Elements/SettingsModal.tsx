@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { useScenes, ScenesType } from "../hooks/useScenes";
 
 //babylon-mmd
-import { AmmoJSPlugin, AssetContainer, Color3, Color4, DirectionalLight, Engine, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, MeshBuilder, Scene, ShadowGenerator, Vector3 } from "@babylonjs/core";
-import { MmdAmmoJSPlugin, MmdAmmoPhysics, MmdCamera, MmdMesh, MmdPhysics, MmdRuntime, VmdLoader } from "babylon-mmd";
+import { AssetContainer, Color3, Color4, DirectionalLight, Engine, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, MeshBuilder, Scene, ShadowGenerator, Vector3 } from "@babylonjs/core";
+import { MmdCamera, MmdMesh, MmdPhysics, MmdRuntime, VmdLoader } from "babylon-mmd";
 import { useMMDModels } from '../hooks/useMMDModels';
 import { AkiraButton } from './AkiraButton';
 import { useSavedModel } from "../hooks/useSavedModel";
@@ -13,7 +13,8 @@ import { IsUUID } from "../logic/extentions";
 import { useSearchParams } from 'react-router-dom';
 import { DeleteFilled } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import HavokPhysics from "@babylonjs/havok/HavokPhysics";
+import { OllamaAIAssistant } from '../logic/LLM/ollama';
+
 const modalStyles = {
     mask: {
         backdropFilter: 'blur(10px)',
@@ -45,6 +46,15 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
     const [mmdRuntime, setmmdRuntime] = useState<MmdRuntime>();
     const [mmdShadowGenerator, setShadowGenerator] = useState<ShadowGenerator>();
     const [MMDAssetContainer, SetMMDAssetContainer] = useState<AssetContainer>()
+
+    // Ollama host
+    const [ollamaHost, setOllamaHost] = useState(() => localStorage.getItem('ollamaHost') || 'http://localhost:11434');
+    const ollamaAssistantRef = useRef<OllamaAIAssistant>(new OllamaAIAssistant(ollamaHost));
+    // Ollama models
+    const [ollamaModels, setOllamaModels] = useState<string[]>([]);
+    const [ollamaModelLoading, setOllamaModelLoading] = useState(false);
+    const [ollamaModelError, setOllamaModelError] = useState<string | null>(null);
+    const [selectedOllamaModel, setSelectedOllamaModel] = useState(() => localStorage.getItem('ollamaModel') || '');
 
     //load mmd model
     const loadMMDModel = async (path?: string, shadowGenerator?: ShadowGenerator) => {
@@ -159,10 +169,66 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
     useEffect(() => {
         loadMMDModel(scene?.modelPathOrLink)
     }, [MMDScene])
-    console.log(scene)
+    useEffect(() => {
+        ollamaAssistantRef.current.setOllamaHost(ollamaHost);
+        localStorage.setItem('ollamaHost', ollamaHost);
+    }, [ollamaHost]);
+
+    useEffect(() => {
+        setOllamaModelLoading(true);
+        setOllamaModelError(null);
+        ollamaAssistantRef.current.getLocalModels()
+            .then(data => {
+                // data.models: [{name: string, ...}]
+                const models = (data.models || data.tags || []).map((m: any) => m.name || m.model || m);
+                setOllamaModels(models);
+                // Если нет выбранной модели, выбрать первую
+                if (!selectedOllamaModel && models.length > 0) {
+                    setSelectedOllamaModel(models[0]);
+                    localStorage.setItem('ollamaModel', models[0]);
+                }
+            })
+            .catch(e => setOllamaModelError(e.message))
+            .finally(() => setOllamaModelLoading(false));
+    }, [ollamaHost]);
+
+    const handleOllamaModelChange = (value: string) => {
+        setSelectedOllamaModel(value);
+        localStorage.setItem('ollamaModel', value);
+    };
+
     const SaveSettings = () => {
         SetOpened();
     }
+    const [languageOptions, setLanguageOptions] = useState<{label: string, value: string}[]>([]);
+    const [baseModels, setBaseModels] = useState<any[]>([]);
+    const [userModels, setUserModels] = useState<any[]>([]);
+
+    useEffect(() => {
+      async function loadLangs() {
+        let langLabels: Record<string, string> = {};
+        try {
+          const resp = await fetch('../assets/locales/langLabels.json');
+          langLabels = await resp.json();
+        } catch {}
+        if (window.electronAPI && window.electronAPI.getLocales) {
+          window.electronAPI.getLocales().then((langs: string[]) => {
+            setLanguageOptions(langs.map((code: string) => ({ label: langLabels[code] || code, value: code })));
+          });
+        }
+      }
+      loadLangs();
+    }, []);
+
+    useEffect(() => {
+      if (window.electronAPI && window.electronAPI.getModels) {
+        window.electronAPI.getModels().then(({ base, user }) => {
+          setBaseModels(base);
+          setUserModels(user);
+        });
+      }
+    }, []);
+
     return (<>
 
         <Modal onCancel={SetOpened} title={<div className="bg-transparent">
@@ -179,23 +245,40 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                     <Select onChange={(value) => {
                         i18n.changeLanguage(value)
                     }} value={i18n.resolvedLanguage} className="w-52" >
-                        <Select.Option key={"en"}>
-                            English
-                        </Select.Option>
-                        <Select.Option key={"ru"}>
-                            Русский
-                        </Select.Option>
-                        <Select.Option key={"ja"}>
-                            日本語
-                        </Select.Option>
-                        <Select.Option key={"cn"}>
-                            中文
-                        </Select.Option>
+                        {languageOptions.map(opt => <Select.Option key={opt.value}>{opt.label}</Select.Option>)}
                     </Select>
 
                 </div>
             </div>
-
+            <div className="my-2">
+                <div className="flex justify-end items-center gap-x-3">
+                    <p className="text-ForegroundColor">Ollama Host</p>
+                    <Input
+                        value={ollamaHost}
+                        onChange={e => setOllamaHost(e.target.value)}
+                        className="w-52"
+                        placeholder="http://localhost:11434"
+                    />
+                </div>
+            </div>
+            <div className="my-2">
+                <div className="flex justify-end items-center gap-x-3">
+                    <p className="text-ForegroundColor">Ollama Model</p>
+                    <Select
+                        loading={ollamaModelLoading}
+                        value={selectedOllamaModel}
+                        onChange={handleOllamaModelChange}
+                        className="w-52"
+                        placeholder={ollamaModelLoading ? 'Loading...' : 'Select model'}
+                        disabled={ollamaModelLoading || !!ollamaModelError || ollamaModels.length === 0}
+                    >
+                        {ollamaModels.map(model => (
+                            <Select.Option key={model} value={model}>{model}</Select.Option>
+                        ))}
+                    </Select>
+                    {ollamaModelError && <span className="text-red-500">{ollamaModelError}</span>}
+                </div>
+            </div>
             {scene && <div className="flex flex-col gap-y-2">
                 <div className="flex justify-end items-center gap-x-3">
                     <p className="text-ForegroundColor">{t("settingsModal.titleSelectModel")}</p>
@@ -234,14 +317,28 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                         {t("settingsModal.buttons.addModel")}
                     </label>
                     <div className="overflow-y-auto max-h-[400px]">
-                        {models.map((el, ind) => <div onClick={() => {
-                            if (sceneId) {
-                                changeSceneModel(sceneId, el.ModelPath)
-                                loadMMDModel(el.ModelPath, mmdShadowGenerator)
-                            }
-                        }} key={ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
-                            <p>{el.ModelName}</p>
-                        </div>)}
+                        {baseModels.length > 0 && <div className="font-bold text-xs text-gray-400 px-2 py-1">Базовые модели</div>}
+                        {baseModels.map((model, ind) => (
+                            <div onClick={() => {
+                                if (sceneId) {
+                                    changeSceneModel(sceneId, model)
+                                    loadMMDModel(model, mmdShadowGenerator)
+                                }
+                            }} key={"base-"+ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
+                                <p>{model}</p>
+                            </div>
+                        ))}
+                        {userModels.length > 0 && <div className="font-bold text-xs text-gray-400 px-2 py-1">Пользовательские модели</div>}
+                        {userModels.map((model, ind) => (
+                            <div onClick={() => {
+                                if (sceneId) {
+                                    changeSceneModel(sceneId, model)
+                                    loadMMDModel(model, mmdShadowGenerator)
+                                }
+                            }} key={"user-"+ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
+                                <p>{model}</p>
+                            </div>
+                        ))}
                         {ModelPaths.map((el, ind) => <div onClick={async () => {
                             if (sceneId) {
                                 const data = await GetModelData(el.id);

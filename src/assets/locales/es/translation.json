@@ -1,0 +1,137 @@
+{
+  "header": {
+    "appTitle": "Aplicación",
+    "button": {
+      "addScene": "Agregar escena",
+      "webOpen": "Abrir versión web",
+      "deleteScene": "Eliminar escena"
+    },
+    "menu1": "Escenas",
+    "menu2": "Configuración",
+    "scenes": "Escenas",
+    "toggleTheme": "Cambiar tema",
+    "deleteSceneConfirm": "Eliminar escena"
+  },
+  "mainPage": {
+    "modal": {
+      "name1": "Título",
+      "name2": "Autor",
+      "name3": "Estado",
+      "name4": "Creado"
+    },
+    "NewTitle": "Noticias",
+    "SocialTitle": "Redes sociales",
+    "SupportMe": "Apóyame",
+    "GithubButton": "Dale estrella en GitHub",
+    "SelectButtonNew": {
+      "webName": "Web",
+      "desktopName": "Aplicación"
+    }
+  },
+  "scenePage": {
+    "MotionCaptureSettings": {
+      "title": "Configuración de captura de movimiento",
+      "settingTitle": "Mover cuerpo",
+      "settingTitle2": "Mover piernas",
+      "settingTitle3": "Mover brazos",
+      "settingTitle4": "Mover cabeza",
+      "settingTitle5": "Calcular cara y ojos",
+      "settingTitle6": "Cálculo Holistic & Kalidokit"
+    },
+    "MaterialsControl": {
+      "title": "Materiales",
+      "title1": "Nombre",
+      "stat1": "Visibilidad"
+    },
+    "AnimationControl": {
+      "title": "Panel de control de animación",
+      "table": {
+        "title1": "Fotograma clave",
+        "title2": "Huesos",
+        "title3": "Morfos",
+        "title4": "Acción"
+      },
+      "buttons": {
+        "buttonTitle1": "Exportar a GLTF",
+        "buttonTitle2": "Exportar a VMD",
+        "buttonTitle3": "Borrar datos de fotogramas clave",
+        "buttonTitle4": "Aplicar"
+      }
+    },
+    "Tutor": {
+      "Settings": {
+        "title": "Panel de configuración",
+        "description": "Aquí puedes configurar la captura de cuerpo completo usando video, así como la posición estática en el eje Y"
+      },
+      "SelectVideo": {
+        "title": "Panel de selección de video",
+        "description": "Aquí puedes subir cualquier video para extraer una animación de baile de una persona, así como ajustar la configuración de audio"
+      },
+      "AnimationControlUi": {
+        "title": "Panel de control de fotogramas clave grabados",
+        "description": "Aquí puedes gestionar los fotogramas capturados y exportarlos a formatos VMD/glTF"
+      },
+      "FullScreen": {
+        "title": "Modo de pantalla completa de la aplicación",
+        "description": "Cambia la aplicación a modo de pantalla completa"
+      },
+      "MaterialsButton": {
+        "title": "Panel de gestión de ropa del personaje",
+        "description": "Aquí puedes ajustar la visibilidad de la ropa del modelo"
+      }
+    },
+    "VariableSettings": {
+      "title": "Variables",
+      "settingTitle": "Escala de pose"
+    },
+    "ModalTitle": "Seleccionar video",
+    "FileUpload": "Cargar archivo de video",
+    "RecordVideo": "Grabar video"
+  },
+  "settingsModal": {
+    "title": "Configuración",
+    "titleLang": "Idioma seleccionado",
+    "titleSelectModel": "Modelo seleccionado",
+    "titleSceneName": "Nombre de la escena",
+    "buttons": {
+      "cancelButton": "Cancelar",
+      "submitButton": "Guardar",
+      "selectModel": "Seleccionar modelo",
+      "addModel": "Agregar modelo"
+    }
+  },
+  "messages": {
+    "deleteMessage": "¿Deseas eliminar la escena seleccionada?"
+  },
+  "notifications": {
+    "sceneAdded": "Escena agregada",
+    "sceneAddedDesc": "Nueva escena creada exitosamente",
+    "maxScenesReached": "Se alcanzó el máximo de escenas",
+    "maxScenesReachedDesc": "El número máximo de escenas es 10",
+    "settingsSaved": "Configuración guardada",
+    "settingsSavedDesc": "La configuración de la escena se ha actualizado correctamente"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No"
+  },
+  "validation": {
+    "sceneNameRequired": "Por favor, ingresa el nombre de la escena",
+    "modelRequired": "Por favor, selecciona un modelo"
+  },
+  "controlPanel": {
+    "video": "Video",
+    "settings": "Configuración",
+    "export": "Exportar",
+    "skeleton": "Esqueleto",
+    "assistant": "Asistente"
+  },
+  "aiDrawer": {
+    "title": "Asistente AI",
+    "thinking": "La IA está pensando...",
+    "reasoning": "Razonamiento de la IA",
+    "audioOutput": "Salida de audio",
+    "inputPlaceholder": "Introduce un mensaje y pulsa Enter",
+    "error": "Error al recibir respuesta de la IA"
+  }
+} 
