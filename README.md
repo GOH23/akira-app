@@ -114,4 +114,4 @@ Ollama is a local LLM server that allows you to run models like Llama 3, Mistral
   - Ensure you have pulled at least one model (e.g., `ollama pull llama3`).
   - Check firewall/antivirus settings if running on Windows.
 
-For more help, see the [Ollama documentation](https://ollama.com/docs) or open an issue in this repository.
+For more help, see the [Ollama documentation](https://github.com/ollama/ollama/tree/main/docs) or open an issue in this repository.
