@@ -12,7 +12,7 @@ export function AkiraButton({ textSize, fillWidth, children, className, onClick,
 }) {
     return (<button ref={ref} onClick={!disabled ? onClick : undefined} className={`
         ${fillWidth && "w-full"} ${textSize ? `text-[${textSize}px]` : ""} 
-        ${!disabled ? "bg-BackgroundButton hover:bg-BackgroundHoverButton" : "bg-BackgroundButtonDisabled select-none cursor-not-allowed"} 
+        ${!disabled ? "bg-BackgroundButton hover:bg-BackgroundHoverButton border border-ForegroundHoverButton hover:text-ForegroundHoverButton" : "bg-BackgroundButtonDisabled select-none cursor-not-allowed"} 
         text-ForegroundButton rounded-md duration-700 p-2 font-bold ${className}`}>
         {children}
     </button>)

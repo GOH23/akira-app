@@ -1,0 +1,156 @@
+{
+  "header": {
+    "appTitle": "App",
+    "button": {
+      "addScene": "Szene hinzufügen",
+      "webOpen": "Webversion öffnen",
+      "deleteScene": "Szene löschen"
+    },
+    "menu1": "Szenen",
+    "menu2": "Einstellungen",
+    "scenes": "Szenen",
+    "toggleTheme": "Thema wechseln",
+    "deleteSceneConfirm": "Szene löschen"
+  },
+  "mainPage": {
+    "modal": {
+      "name1": "Titel",
+      "name2": "Autor",
+      "name3": "Status",
+      "name4": "Erstellt"
+    },
+    "NewTitle": "Neuigkeiten",
+    "SocialTitle": "Soziale Netzwerke",
+    "SupportMe": "Unterstütze mich",
+    "GithubButton": "Auf GitHub markieren",
+    "SelectButtonNew": {
+      "webName": "Web",
+      "desktopName": "Anwendung"
+    },
+    "guideButton": "Anleitung"
+  },
+  "scenePage": {
+    "MotionCaptureSettings": {
+      "title": "Motion-Capture-Einstellungen",
+      "settingTitle": "Körper bewegen",
+      "settingTitle2": "Beine bewegen",
+      "settingTitle3": "Arme bewegen",
+      "settingTitle4": "Kopf bewegen",
+      "settingTitle5": "Gesicht und Augen berechnen",
+      "settingTitle6": "Holistic & Kalidokit Berechnung"
+    },
+    "MaterialsControl": {
+      "title": "Materialien",
+      "title1": "Name",
+      "stat1": "Sichtbarkeit"
+    },
+    "AnimationControl": {
+      "title": "Animationssteuerung",
+      "table": {
+        "title1": "Schlüsselbild",
+        "title2": "Knochen",
+        "title3": "Morphs",
+        "title4": "Aktion"
+      },
+      "buttons": {
+        "buttonTitle1": "Als GLTF exportieren",
+        "buttonTitle2": "Als VMD exportieren",
+        "buttonTitle3": "Schlüsselbilddaten löschen",
+        "buttonTitle4": "Anwenden"
+      }
+    },
+    "Tutor": {
+      "Settings": {
+        "title": "Einstellungs-Panel",
+        "description": "Hier können Sie die Ganzkörpererfassung per Video sowie die statische Position auf der Y-Achse konfigurieren"
+      },
+      "SelectVideo": {
+        "title": "Videoauswahl-Panel",
+        "description": "Hier können Sie ein beliebiges Video hochladen, um eine Tanzanimation zu extrahieren, sowie die Audioeinstellungen anpassen"
+      },
+      "AnimationControlUi": {
+        "title": "Panel für aufgezeichnete Schlüsselbilder",
+        "description": "Hier können Sie erfasste Bilder verwalten und in VMD/glTF-Formate exportieren"
+      },
+      "FullScreen": {
+        "title": "Vollbildmodus der Anwendung",
+        "description": "Schaltet die Anwendung in den Vollbildmodus"
+      },
+      "MaterialsButton": {
+        "title": "Panel zur Verwaltung der Charakterkleidung",
+        "description": "Hier können Sie die Sichtbarkeit der Modellkleidung anpassen"
+      }
+    },
+    "VariableSettings": {
+      "title": "Variablen",
+      "settingTitle": "Posenskala"
+    },
+    "ModalTitle": "Video auswählen",
+    "FileUpload": "Videodatei laden",
+    "RecordVideo": "Video aufnehmen"
+  },
+  "settingsModal": {
+    "title": "Einstellungen",
+    "titleLang": "Ausgewählte Sprache",
+    "titleSelectModel": "Ausgewähltes Modell",
+    "titleSceneName": "Szenenname",
+    "skeleton": {
+      "title": "Skelett-Anpassung",
+      "showPose": "Pose anzeigen",
+      "poseColor": "Posenfarbe",
+      "poseLineWidth": "Posen-Linienstärke",
+      "showHands": "Hände anzeigen",
+      "handColor": "Handfarbe",
+      "handLineWidth": "Hand-Linienstärke",
+      "showFace": "Gesicht anzeigen",
+      "faceColor": "Gesichtsfarbe",
+      "faceLineWidth": "Gesicht-Linienstärke"
+    },
+    "buttons": {
+      "cancelButton": "Abbrechen",
+      "submitButton": "Speichern",
+      "selectModel": "Modell auswählen",
+      "addModel": "Modell hinzufügen"
+    },
+    "ollama": {
+      "host": "Ollama Host",
+      "model": "Ollama Modell",
+      "loading": "Lädt...",
+      "selectModel": "Modell auswählen"
+    }
+  },
+  "messages": {
+    "deleteMessage": "Möchten Sie die ausgewählte Szene löschen?"
+  },
+  "notifications": {
+    "sceneAdded": "Szene hinzugefügt",
+    "sceneAddedDesc": "Neue Szene wurde erfolgreich erstellt",
+    "maxScenesReached": "Maximale Anzahl an Szenen erreicht",
+    "maxScenesReachedDesc": "Die maximale Anzahl an Szenen beträgt 10",
+    "settingsSaved": "Einstellungen gespeichert",
+    "settingsSavedDesc": "Szeneneinstellungen wurden erfolgreich aktualisiert"
+  },
+  "common": {
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "validation": {
+    "sceneNameRequired": "Bitte geben Sie den Szenennamen ein",
+    "modelRequired": "Bitte wählen Sie ein Modell aus"
+  },
+  "controlPanel": {
+    "video": "Video",
+    "settings": "Einstellungen",
+    "export": "Exportieren",
+    "skeleton": "Skelett",
+    "assistant": "Assistent"
+  },
+  "aiDrawer": {
+    "title": "KI-Assistent",
+    "thinking": "KI denkt nach...",
+    "reasoning": "KI-Begründung",
+    "audioOutput": "Audioausgabe",
+    "inputPlaceholder": "Nachricht eingeben und Enter drücken",
+    "error": "Fehler beim Empfangen der Antwort von der KI"
+  }
+} 

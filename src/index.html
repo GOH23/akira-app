@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Akira App v1.0.0b</title>
+  <title>Akira App v1.1.0</title>
 
 </head>
 
@@ -13,11 +13,16 @@
   <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
   <script>
     let havokInstance;
-    HavokPhysics().then((havok) => {
+    try {
+      HavokPhysics().then((havok) => {
 
-      window.havokPlugin = havok
-      havokPlugin = havok;
-    });
+        window.havokPlugin = havok
+        havokPlugin = havok;
+      });
+    } catch {
+
+    }
+
 
   </script>
   <script>

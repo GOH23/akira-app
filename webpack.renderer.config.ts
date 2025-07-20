@@ -30,10 +30,11 @@ export const rendererConfig: Configuration = {
   plugins: [new ProvidePlugin({
     Buffer: ['buffer', 'Buffer'],
     process: 'process/browser'
-  }),...plugins],
+  }), ...plugins],
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json', '.wasm'],
     fallback: {
+      fs: false,
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),
       path: require.resolve('path-browserify')

@@ -7,7 +7,7 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
-
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
@@ -16,21 +16,34 @@ const config: ForgeConfig = {
     asar: {
       unpackDir: "assets"
     },
-    
+
   },
-  
+
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({
-    options: {
-      description: ""
-    }
-  })],
+  makers: [
+    new MakerSquirrel({
+
+    }),
+    new MakerZIP({
+
+    }, ['darwin']),
+    new MakerDMG({
+
+      format: 'ULFO'
+    }),
+    new MakerRpm({
+
+    }),
+    new MakerDeb({
+
+    }),
+
+  ],
   plugins: [
-    new AutoUnpackNativesPlugin({}),
+    // new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
       mainConfig,
-      devContentSecurityPolicy: "default-src 'self' 'unsafe-eval' 'unsafe-inline' static: http: https: ws: blob:",
-    
+      devContentSecurityPolicy: "default-src 'self' 'unsafe-eval' 'unsafe-inline' static: http: https: ws: blob: data:",
       renderer: {
         config: rendererConfig,
         entryPoints: [
@@ -43,21 +56,19 @@ const config: ForgeConfig = {
             },
           },
         ],
-        
       },
-      
     }),
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
-    new FusesPlugin({
-      version: FuseVersion.V1,
-      [FuseV1Options.RunAsNode]: false,
-      [FuseV1Options.EnableCookieEncryption]: true,
-      [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
-      [FuseV1Options.EnableNodeCliInspectArguments]: false,
-      [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-      [FuseV1Options.OnlyLoadAppFromAsar]: true,
-    }),
+    // new FusesPlugin({
+    //   version: FuseVersion.V1,
+    //   [FuseV1Options.RunAsNode]: false,
+    //   [FuseV1Options.EnableCookieEncryption]: true,
+    //   [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+    //   [FuseV1Options.EnableNodeCliInspectArguments]: false,
+    //   [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
+    //   [FuseV1Options.OnlyLoadAppFromAsar]: true,
+    // }),
   ],
 };
 

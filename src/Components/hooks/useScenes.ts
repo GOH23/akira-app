@@ -1,11 +1,24 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+type SkeletonSettingsType = {
+    showPose: boolean;
+    poseColor: string;
+    poseLineWidth: number;
+    showHands: boolean;
+    handColor: string;
+    handLineWidth: number;
+    showFace: boolean;
+    faceColor: string;
+    faceLineWidth: number;
+};
+
 type ScenesType = {
     id: string
     modelPathOrLink: string,
     sceneName: string,
-    modelName: string
+    modelName: string,
+    skeletonSettings?: SkeletonSettingsType
 }
 interface ScenesState  {
     scenes: ScenesType[],

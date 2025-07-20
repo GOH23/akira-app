@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { useScenes, ScenesType } from "../hooks/useScenes";
 
 //babylon-mmd
-import { AmmoJSPlugin, AssetContainer, Color3, Color4, DirectionalLight, Engine, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, MeshBuilder, Scene, ShadowGenerator, Vector3 } from "@babylonjs/core";
-import { MmdAmmoJSPlugin, MmdAmmoPhysics, MmdCamera, MmdMesh, MmdPhysics, MmdRuntime, VmdLoader } from "babylon-mmd";
+import { AssetContainer, Color3, Color4, DirectionalLight, Engine, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, MeshBuilder, Scene, ShadowGenerator, Vector3 } from "@babylonjs/core";
+import { MmdCamera, MmdMesh, MmdPhysics, MmdRuntime, VmdLoader } from "babylon-mmd";
 import { useMMDModels } from '../hooks/useMMDModels';
 import { AkiraButton } from './AkiraButton';
 import { useSavedModel } from "../hooks/useSavedModel";
@@ -13,7 +13,10 @@ import { IsUUID } from "../logic/extentions";
 import { useSearchParams } from 'react-router-dom';
 import { DeleteFilled } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import HavokPhysics from "@babylonjs/havok/HavokPhysics";
+import { OllamaAIAssistant } from '../logic/LLM/ollama';
+import { useTheme } from "next-themes";
+import { useNextJSToAntdTheme } from "../hooks/useCustomTheme";
+
 const modalStyles = {
     mask: {
         backdropFilter: 'blur(10px)',
@@ -45,6 +48,15 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
     const [mmdRuntime, setmmdRuntime] = useState<MmdRuntime>();
     const [mmdShadowGenerator, setShadowGenerator] = useState<ShadowGenerator>();
     const [MMDAssetContainer, SetMMDAssetContainer] = useState<AssetContainer>()
+
+    // Ollama host
+    const [ollamaHost, setOllamaHost] = useState(() => localStorage.getItem('ollamaHost') || 'http://localhost:11434');
+    const ollamaAssistantRef = useRef<OllamaAIAssistant>(new OllamaAIAssistant(ollamaHost));
+    // Ollama models
+    const [ollamaModels, setOllamaModels] = useState<string[]>([]);
+    const [ollamaModelLoading, setOllamaModelLoading] = useState(false);
+    const [ollamaModelError, setOllamaModelError] = useState<string | null>(null);
+    const [selectedOllamaModel, setSelectedOllamaModel] = useState(() => localStorage.getItem('ollamaModel') || '');
 
     //load mmd model
     const loadMMDModel = async (path?: string, shadowGenerator?: ShadowGenerator) => {
@@ -159,10 +171,84 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
     useEffect(() => {
         loadMMDModel(scene?.modelPathOrLink)
     }, [MMDScene])
-    console.log(scene)
+    useEffect(() => {
+        ollamaAssistantRef.current.setOllamaHost(ollamaHost);
+        localStorage.setItem('ollamaHost', ollamaHost);
+    }, [ollamaHost]);
+
+    useEffect(() => {
+        setOllamaModelLoading(true);
+        setOllamaModelError(null);
+        ollamaAssistantRef.current.getLocalModels()
+            .then(data => {
+                // data.models: [{name: string, ...}]
+                const models = (data.models || data.tags || []).map((m: any) => m.name || m.model || m);
+                setOllamaModels(models);
+                // Если нет выбранной модели, выбрать первую
+                if (!selectedOllamaModel && models.length > 0) {
+                    setSelectedOllamaModel(models[0]);
+                    localStorage.setItem('ollamaModel', models[0]);
+                }
+            })
+            .catch(e => setOllamaModelError(e.message))
+            .finally(() => setOllamaModelLoading(false));
+    }, [ollamaHost]);
+
+    const handleOllamaModelChange = (value: string) => {
+        setSelectedOllamaModel(value);
+        localStorage.setItem('ollamaModel', value);
+    };
+
     const SaveSettings = () => {
         SetOpened();
     }
+    const [languageOptions, setLanguageOptions] = useState<{label: string, value: string}[]>([]);
+    const [baseModels, setBaseModels] = useState<any[]>([]);
+    const [userModels, setUserModels] = useState<any[]>([]);
+
+    // Debounced color state for poseColor
+    const [localPoseColor, setLocalPoseColor] = useState<string>(scene?.skeletonSettings?.poseColor ?? '#00cff7');
+    useEffect(() => {
+        setLocalPoseColor(scene?.skeletonSettings?.poseColor ?? '#00cff7');
+    }, [scene?.skeletonSettings?.poseColor]);
+    // Debounce update
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (scene && localPoseColor !== scene.skeletonSettings?.poseColor) {
+                changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseColor: localPoseColor });
+            }
+        }, 150);
+        return () => clearTimeout(handler);
+    }, [localPoseColor]);
+
+    useEffect(() => {
+      async function loadLangs() {
+        let langLabels: Record<string, string> = {};
+        try {
+          const resp = await fetch('../assets/locales/langLabels.json');
+          langLabels = await resp.json();
+        } catch {}
+        if (window.electronAPI && window.electronAPI.getLocales) {
+          window.electronAPI.getLocales().then((langs: string[]) => {
+            setLanguageOptions(langs.map((code: string) => ({ label: langLabels[code] || code, value: code })));
+          });
+        }
+      }
+      loadLangs();
+    }, []);
+
+    useEffect(() => {
+      if (window.electronAPI && window.electronAPI.getModels) {
+        window.electronAPI.getModels().then(({ base, user }) => {
+          setBaseModels(base);
+          setUserModels(user);
+        });
+      }
+    }, []);
+
+    const { theme } = useTheme();
+    const { Layout, MenuTheme, borderColor } = useNextJSToAntdTheme(theme);
+
     return (<>
 
         <Modal onCancel={SetOpened} title={<div className="bg-transparent">
@@ -179,23 +265,40 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                     <Select onChange={(value) => {
                         i18n.changeLanguage(value)
                     }} value={i18n.resolvedLanguage} className="w-52" >
-                        <Select.Option key={"en"}>
-                            English
-                        </Select.Option>
-                        <Select.Option key={"ru"}>
-                            Русский
-                        </Select.Option>
-                        <Select.Option key={"ja"}>
-                            日本語
-                        </Select.Option>
-                        <Select.Option key={"cn"}>
-                            中文
-                        </Select.Option>
+                        {languageOptions.map(opt => <Select.Option key={opt.value}>{opt.label}</Select.Option>)}
                     </Select>
 
                 </div>
             </div>
-
+            <div className="my-2">
+                <div className="flex justify-end items-center gap-x-3">
+                    <p className="text-ForegroundColor">{t("settingsModal.ollama.host")}</p>
+                    <Input
+                        value={ollamaHost}
+                        onChange={e => setOllamaHost(e.target.value)}
+                        className="w-52"
+                        placeholder="http://localhost:11434"
+                    />
+                </div>
+            </div>
+            <div className="my-2">
+                <div className="flex justify-end items-center gap-x-3">
+                    <p className="text-ForegroundColor">{t("settingsModal.ollama.model")}</p>
+                    <Select
+                        loading={ollamaModelLoading}
+                        value={selectedOllamaModel}
+                        onChange={handleOllamaModelChange}
+                        className="w-52"
+                        placeholder={ollamaModelLoading ? t("settingsModal.ollama.loading") : t("settingsModal.ollama.selectModel")}
+                        disabled={ollamaModelLoading || !!ollamaModelError || ollamaModels.length === 0}
+                    >
+                        {ollamaModels.map(model => (
+                            <Select.Option key={model} value={model}>{model}</Select.Option>
+                        ))}
+                    </Select>
+                    {ollamaModelError && <span className="text-red-500">{ollamaModelError}</span>}
+                </div>
+            </div>
             {scene && <div className="flex flex-col gap-y-2">
                 <div className="flex justify-end items-center gap-x-3">
                     <p className="text-ForegroundColor">{t("settingsModal.titleSelectModel")}</p>
@@ -208,6 +311,57 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                         changeSceneSetting(scene.id, "sceneName", ev.target.value)
                     }} />
 
+                </div>
+                <div
+                    className="my-4 p-4 border rounded-md"
+                    style={{
+                        background: Layout.bg || "#f9f9f9",
+                        borderColor: borderColor || "#e5e7eb",
+                        color: Layout.fg || "#222"
+                    }}
+                >
+                    <p className="font-bold mb-2" style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.title")}</p>
+                    <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showPose ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showPose: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showPose")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.poseColor")}</span>
+                            <input
+                                type="color"
+                                value={localPoseColor}
+                                onChange={e => setLocalPoseColor(e.target.value)}
+                                onBlur={e => {
+                                    if (scene && localPoseColor !== scene.skeletonSettings?.poseColor) {
+                                        changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseColor: localPoseColor });
+                                    }
+                                }}
+                            />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.poseLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.poseLineWidth ?? 4} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showHands ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showHands: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showHands")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.handColor")}</span>
+                            <input type="color" value={scene.skeletonSettings?.handColor ?? '#eb1064'} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, handColor: e.target.value })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.handLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.handLineWidth ?? 5} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, handLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showFace ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showFace: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showFace")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.faceColor")}</span>
+                            <input type="color" value={scene.skeletonSettings?.faceColor ?? '#C0C0C070'} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, faceColor: e.target.value })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.faceLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.faceLineWidth ?? 1} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, faceLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                    </div>
                 </div>
                 <AkiraButton className="w-full" onClick={() => SetSubModalOpened(true)}>{t("settingsModal.buttons.selectModel")}</AkiraButton>
             </div>}
@@ -234,14 +388,28 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                         {t("settingsModal.buttons.addModel")}
                     </label>
                     <div className="overflow-y-auto max-h-[400px]">
-                        {models.map((el, ind) => <div onClick={() => {
-                            if (sceneId) {
-                                changeSceneModel(sceneId, el.ModelPath)
-                                loadMMDModel(el.ModelPath, mmdShadowGenerator)
-                            }
-                        }} key={ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
-                            <p>{el.ModelName}</p>
-                        </div>)}
+                        {baseModels.length > 0 && <div className="font-bold text-xs text-gray-400 px-2 py-1">Базовые модели</div>}
+                        {baseModels.map((model, ind) => (
+                            <div onClick={() => {
+                                if (sceneId) {
+                                    changeSceneModel(sceneId, model)
+                                    loadMMDModel(model, mmdShadowGenerator)
+                                }
+                            }} key={"base-"+ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
+                                <p>{model}</p>
+                            </div>
+                        ))}
+                        {userModels.length > 0 && <div className="font-bold text-xs text-gray-400 px-2 py-1">Пользовательские модели</div>}
+                        {userModels.map((model, ind) => (
+                            <div onClick={() => {
+                                if (sceneId) {
+                                    changeSceneModel(sceneId, model)
+                                    loadMMDModel(model, mmdShadowGenerator)
+                                }
+                            }} key={"user-"+ind} className="bg-BackgroundButton font-bold duration-700 hover:bg-BackgroundHoverButton cursor-pointer text-ForegroundButton p-3">
+                                <p>{model}</p>
+                            </div>
+                        ))}
                         {ModelPaths.map((el, ind) => <div onClick={async () => {
                             if (sceneId) {
                                 const data = await GetModelData(el.id);

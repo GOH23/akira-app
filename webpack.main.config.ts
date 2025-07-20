@@ -17,4 +17,15 @@ export const mainConfig: Configuration = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        wasm: {
+          test: /wasm-bindgen-rayon/,
+          name: "wasm-runtime",
+          enforce: true,
+        }
+      }
+    }
+  }
 };

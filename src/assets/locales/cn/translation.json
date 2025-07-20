@@ -1,4 +1,3 @@
-
 {
     "header": {
         "appTitle": "应用",
@@ -8,7 +7,10 @@
             "deleteScene": "删除场景"
         },
         "menu1": "场景",
-        "menu2": "设置"
+        "menu2": "设置",
+        "scenes": "场景",
+        "toggleTheme": "切换主题",
+        "deleteSceneConfirm": "删除场景"
     },
     "mainPage": {
         "modal": {
@@ -24,7 +26,8 @@
         "SelectButtonNew": {
             "webName": "网页",
             "desktopName": "应用"
-        }
+        },
+        "guideButton": "指南"
     },
     "scenePage": {
         "MotionCaptureSettings": {
@@ -88,17 +91,75 @@
     },
     "settingsModal": {
         "title": "设置",
-        "titleLang": "语言",
-        "titleSelectModel": "模型",
+        "titleLang": "选择的语言",
+        "titleSelectModel": "选择的模型",
         "titleSceneName": "场景名称",
         "buttons": {
             "cancelButton": "取消",
             "submitButton": "提交",
             "selectModel": "选择模型",
             "addModel": "添加模型"
+        },
+        "skeleton": {
+            "title": "骨骼自定义",
+            "showPose": "显示姿势",
+            "poseColor": "姿势颜色",
+            "poseLineWidth": "姿势线宽",
+            "showHands": "显示手部",
+            "handColor": "手部颜色",
+            "handLineWidth": "手部线宽",
+            "showFace": "显示面部",
+            "faceColor": "面部颜色",
+            "faceLineWidth": "面部线宽"
+        },
+        "ollama": {
+            "host": "Ollama主机",
+            "model": "Ollama模型",
+            "loading": "加载中...",
+            "selectModel": "选择模型"
         }
     },
     "messages": {
         "deleteMessage": "确定删除选中的场景吗？"
+    },
+    "notifications": {
+        "sceneAdded": "场景已添加",
+        "sceneAddedDesc": "新场景已成功创建",
+        "maxScenesReached": "已达到最大场景数",
+        "maxScenesReachedDesc": "最大场景数为10"
+    },
+    "common": {
+        "yes": "是",
+        "no": "否"
+    },
+    "controlPanel": {
+        "video": "视频",
+        "settings": "设置",
+        "export": "导出",
+        "skeleton": "骨骼",
+        "assistant": "助手"
+    },
+    "guide": {
+      "title": "AI助手和Ollama使用指南",
+      "howToUseTitle": "🧑‍💻 如何使用神经网络（AI助手）",
+      "howToUseStep1": "打开AI助手（聊天图标或'AI Assistant'面板）。",
+      "howToUseStep2": "输入消息并发送。",
+      "howToUseStep3": "Akira会用所选LLM模型回复，并可能触发动画和语音。",
+      "howToUseStep4": "在设置中切换语言以获得多语言回复。",
+      "howToUseStep5": "可在聊天底部开启/关闭语音输出。",
+      "note": "注意：",
+      "noteText": "要使用AI助手，必须运行本地Ollama服务器并安装兼容的LLM模型（见下文）。",
+      "ollamaTitle": "🤖 如何安装和使用Ollama",
+      "ollamaStep1": "访问 https://ollama.com/download 并根据操作系统下载安装Ollama。",
+      "ollamaStep2": "运行 ollama serve（Windows可在开始菜单启动）。",
+      "ollamaStep3": "拉取模型：ollama pull llama3（或从Ollama Library选择其他模型）。",
+      "ollamaStep4": "在Akira设置→Ollama Host中填写 http://localhost:11434（默认），并选择模型。",
+      "ollamaStep5": "打开AI助手，开始聊天！",
+      "troubleshootingTitle": "❓ 故障排查",
+      "troubleshooting1": "如遇到'Failed to connect to Ollama'或'No models found'等错误：",
+      "troubleshooting2": "确保Ollama已启动并可通过配置的主机访问。",
+      "troubleshooting3": "确保已拉取至少一个模型（如 ollama pull llama3）。",
+      "troubleshooting4": "如在Windows上，检查防火墙/杀毒软件设置。",
+      "moreHelp": "更多帮助请参阅Ollama文档或在本仓库提交issue。"
     }
 }

@@ -7,7 +7,10 @@
             "deleteScene": "Delete scene"
         },
         "menu1": "Scenes",
-        "menu2": "Settings"
+        "menu2": "Settings",
+        "scenes": "Scenes",
+        "toggleTheme": "Toggle theme",
+        "deleteSceneConfirm": "Delete scene"
     },
     "mainPage": {
         "modal": {
@@ -23,7 +26,8 @@
         "SelectButtonNew": {
             "webName": "Web",
             "desktopName": "Application"
-        }
+        },
+        "guideButton": "Guide"
     },
     "scenePage": {
         "MotionCaptureSettings": {
@@ -95,9 +99,71 @@
             "submitButton": "Submit",
             "selectModel": "Select Model",
             "addModel": "Add Model"
+        },
+        "skeleton": {
+            "title": "Skeleton Customization",
+            "showPose": "Show Pose",
+            "poseColor": "Pose Color",
+            "poseLineWidth": "Pose Line Width",
+            "showHands": "Show Hands",
+            "handColor": "Hand Color",
+            "handLineWidth": "Hand Line Width",
+            "showFace": "Show Face",
+            "faceColor": "Face Color",
+            "faceLineWidth": "Face Line Width"
+        },
+        "ollama": {
+            "host": "Ollama Host",
+            "model": "Ollama Model",
+            "loading": "Loading...",
+            "selectModel": "Select model"
         }
     },
     "messages": {
         "deleteMessage": "You want to delete selected scene?"
+    },
+    "notifications": {
+        "sceneAdded": "Scene added",
+        "sceneAddedDesc": "New scene has been created successfully",
+        "maxScenesReached": "Maximum scenes reached",
+        "maxScenesReachedDesc": "Maximum number of scenes is 10",
+        "settingsSaved": "Settings saved",
+        "settingsSavedDesc": "Scene settings have been updated successfully"
+    },
+    "common": {
+        "yes": "Yes",
+        "no": "No"
+    },
+    "validation": {
+        "sceneNameRequired": "Please enter scene name",
+        "modelRequired": "Please select a model"
+    },
+    "controlPanel": {
+        "video": "Video",
+        "settings": "Settings",
+        "export": "Export",
+        "skeleton": "Skeleton",
+        "assistant": "Assistant"
+    },
+    "aiDrawer": {
+        "title": "AI Assistant",
+        "thinking": "AI is thinking...",
+        "reasoning": "AI reasoning",
+        "audioOutput": "Audio output",
+        "inputPlaceholder": "Enter a message and press Enter",
+        "error": "Error receiving response from AI"
+    },
+    "guide": {
+        "title": "Welcome to Akira!",
+        "intro": "Akira is a modern application for 3D animation, motion capture, and working with MMD models. This guide will help you quickly get started and use all the features.",
+        "step1": "Main page: Here you will find the latest news, social links, support, and can proceed to create or select scenes.",
+        "step2": "Scenes and models: In the 'Scenes' section, you can create new scenes, upload your 3D models (.bpmx format), and select animations for them.",
+        "step3": "Loading animations: Go to a scene, use the control panel to load .vmd animation files. You can combine several animations and control their parameters.",
+        "step4": "Motion Capture: Use the built-in motion capture with your camera. Open the corresponding panel, select a video source, and start capturing. Movements will be automatically applied to the selected model.",
+        "step5": "Materials and appearance: In the 'Materials' panel, you can adjust colors, transparency, and other material parameters.",
+        "step6": "Export: After creating an animation, you can export the result to GLTF or VMD formats for further use.",
+        "step7": "Voice assistant and AI: The built-in AI assistant helps generate animations, gives tips, and automates routine tasks.",
+        "step8": "Support and feedback: If you have questions or suggestions, join our Discord or write on GitHub.",
+        "okButton": "Got it"
     }
 }

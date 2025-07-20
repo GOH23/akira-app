@@ -3,7 +3,8 @@
 type HookType = {
     Layout: {
         bg: string,
-        fg: string
+        fg: string,
+        triggerBg: string
     },
     MenuTheme: {
         bg: string,
@@ -21,7 +22,8 @@ export const useNextJSToAntdTheme = (theme: string | undefined): HookType => {
             return {
                 Layout: {
                     bg: "#682a92",
-                    fg: "#fbfaff"
+                    fg: "#fbfaff",
+                    triggerBg: "#590996"
                 },
                 MenuTheme: {
                     bg: "#682a92",
@@ -36,7 +38,8 @@ export const useNextJSToAntdTheme = (theme: string | undefined): HookType => {
             return {
                 Layout: {
                     bg: "#04052e",
-                    fg: "#fbfaff"
+                    fg: "#fbfaff",
+                    triggerBg: "#090a57"
                 },
                 MenuTheme: {
                     bg: "#04052e",
@@ -50,14 +53,15 @@ export const useNextJSToAntdTheme = (theme: string | undefined): HookType => {
         case "light":
             return {
                 Layout: {
-                    bg: "#f5ebe0",
-                    fg: "#212121"
+                    bg: "#ffffff",
+                    fg: "#374151",
+                    triggerBg: "#7c3aed"
                 },
                 MenuTheme: {
-                    bg: "#f5ebe0",
-                    fg: "#212121",
-                    activeFg: "#4b4a4a",
-                    itemSelectedBg: "#d5bdaf"
+                    bg: "#ffffff",
+                    fg: "#374151",
+                    activeFg: "#ffffff",
+                    itemSelectedBg: "#f5f3ff"
                 },
 
                 borderColor: "#e3d5ca",
@@ -67,7 +71,8 @@ export const useNextJSToAntdTheme = (theme: string | undefined): HookType => {
             return {
                 Layout: {
                     bg: "",
-                    fg: ""
+                    fg: "",
+                    triggerBg: ""
                 },
                 MenuTheme: {
                     bg: "",
