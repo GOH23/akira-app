@@ -1,6 +1,6 @@
 # Akira-app - Next-Generation Motion Capture for MMD/Blender
 [![License](https://img.shields.io/badge/License-MIT-ff69b4)](https://github.com/GOH23/akira-app)  
-[![Version](https://img.shields.io/badge/version-1.0.0a-brightgreen)](https://github.com/GOH23/akira-app)  
+[![Version](https://img.shields.io/badge/version-1.1.1-brightgreen)](https://github.com/GOH23/akira-app)  
 [![GitHub Issues](https://img.shields.io/github/issues/GOH23/akira-app)](https://github.com/GOH23/akira-app/issues)  
 
 **Revolutionizing motion capture with real-time AI-powered animation workflows!**  
@@ -114,4 +114,4 @@ Ollama is a local LLM server that allows you to run models like Llama 3, Mistral
   - Ensure you have pulled at least one model (e.g., `ollama pull llama3`).
   - Check firewall/antivirus settings if running on Windows.
 
-For more help, see the [Ollama documentation](https://ollama.com/docs) or open an issue in this repository.
+For more help, see the [Ollama documentation](https://github.com/ollama/ollama/tree/main/docs) or open an issue in this repository.
