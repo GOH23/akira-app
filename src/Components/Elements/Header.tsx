@@ -355,7 +355,7 @@ export default function HeaderLayout() {
                                 </Button>
                             </motion.div>
 
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button
                                     icon={<GlobalOutlined />}
                                     onClick={handleWebOpen}
@@ -363,7 +363,7 @@ export default function HeaderLayout() {
                                 >
                                     {t("header.button.webOpen")}
                                 </Button>
-                            </motion.div>
+                            </motion.div> */}
 
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button

@@ -17,7 +17,7 @@ type jsonText = {
     animation: string,
 
 }
-export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,mmdRuntime }: { DrawerStates: DrawerStatesType,mmdRuntime: MmdRuntime, OpenDrawer: (drawer: keyof DrawerStatesType, value: boolean) => void, motionModel: MotionModel, mmdScene: Scene }) {
+export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene, mmdRuntime }: { DrawerStates: DrawerStatesType, mmdRuntime: MmdRuntime, OpenDrawer: (drawer: keyof DrawerStatesType, value: boolean) => void, motionModel: MotionModel, mmdScene: Scene }) {
     const [loading, setLoading] = useState<boolean>(false);
     const [value, setValue] = useState<string>('');
     const [vmdLoader, SetVmdLoader] = useState<VmdLoader>(new VmdLoader(mmdScene))
@@ -31,11 +31,12 @@ export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,
     const [GuideOpened, setGuideOpened] = useState(false);
 
     useEffect(() => {
-        audioModelRef.current.loadModel().then(() => {
-            console.log("Audio model loaded")
-        })
-
-    }, [audioRef]);
+        if (!DrawerStates.AssistantOpened) {
+            audioModelRef.current.loadModel().then(() => {
+                console.log("Audio model loaded")
+            })
+        }
+    }, [audioRef, DrawerStates.AssistantOpened]);
     useEffect(() => {
         // Listen for streamed AI responses
         const handler = (_event: any, data: any) => {
@@ -185,11 +186,26 @@ export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,
             setAiResponding(false);
         }
     };
-    const onCopy = (textToCopy: any) => {
+    const onCopy = (textToCopy: string) => {
+        if (navigator && navigator.clipboard) {
+            navigator.clipboard.writeText(textToCopy);
+        } else {
+            // fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+    };
 
+    const onResend = (msg: string) => {
+        setValue(msg);
+        handleSend(msg);
     };
     return <AkiraDrawer
-        title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+        title={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span>{t('aiDrawer.title')}</span>
             <Button
                 type="text"
@@ -224,12 +240,18 @@ export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,
                             role={msg.role}
                             footer={(content, info) => (
                                 <Space>
-                                    <Button color="default" variant="text" size="small" icon={<SyncOutlined />} />
                                     <Button
                                         color="default"
                                         variant="text"
                                         size="small"
-                                        onClick={() => onCopy(content)}
+                                        icon={<SyncOutlined />}
+                                        onClick={() => onResend(msg.content)}
+                                    />
+                                    <Button
+                                        color="default"
+                                        variant="text"
+                                        size="small"
+                                        onClick={() => onCopy(msg.content)}
                                         icon={<CopyOutlined />}
                                     />
                                 </Space>
@@ -290,11 +312,11 @@ export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,
                 <h3 className="mt-4">{t('guide.ollamaTitle')}</h3>
                 <ol>
                     <li>
-                        <span dangerouslySetInnerHTML={{__html: t('guide.ollamaStep1').replace('https://ollama.com/download', '<a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">https://ollama.com/download</a>')}} />
+                        <span dangerouslySetInnerHTML={{ __html: t('guide.ollamaStep1').replace('https://ollama.com/download', '<a href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">https://ollama.com/download</a>') }} />
                     </li>
                     <li>{t('guide.ollamaStep2')}</li>
                     <li>
-                        <span dangerouslySetInnerHTML={{__html: t('guide.ollamaStep3').replace('Ollama Library', '<a href="https://ollama.com/library" target="_blank" rel="noopener noreferrer">Ollama Library</a>')}} />
+                        <span dangerouslySetInnerHTML={{ __html: t('guide.ollamaStep3').replace('Ollama Library', '<a href="https://ollama.com/library" target="_blank" rel="noopener noreferrer">Ollama Library</a>') }} />
                     </li>
                     <li>{t('guide.ollamaStep4')}</li>
                     <li>{t('guide.ollamaStep5')}</li>
@@ -308,7 +330,7 @@ export function AIAkiraDrawer({ DrawerStates, OpenDrawer, motionModel, mmdScene,
                     </ul></li>
                 </ul>
                 <p>
-                    <span dangerouslySetInnerHTML={{__html: t('guide.moreHelp').replace('Ollama documentation', '<a href="https://ollama.com/docs" target="_blank" rel="noopener noreferrer">Ollama documentation</a>')}} />
+                    <span dangerouslySetInnerHTML={{ __html: t('guide.moreHelp').replace('Ollama documentation', '<a href="https://ollama.com/docs" target="_blank" rel="noopener noreferrer">Ollama documentation</a>') }} />
                 </p>
             </div>
         </AkiraModalDialog>

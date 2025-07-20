@@ -2,10 +2,10 @@
 import { useScenes, ScenesType } from './hooks/useScenes'
 import { useEffect, useRef, useState, MouseEvent, useMemo } from 'react'
 //babylon-mmd & babylonjs
-import { AbstractMesh, AssetContainer, Color3, CreateGround, DirectionalLight, Engine, FlyCamera, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, Scene, ShadowGenerator, Vector3 } from '@babylonjs/core'
+import { AbstractMesh, AssetContainer, Color3, CreateGround, DebugLayer, DirectionalLight, Engine, FlyCamera, HavokPlugin, HemisphericLight, LoadAssetContainerAsync, Mesh, Scene, ShadowGenerator, Vector3 } from '@babylonjs/core'
 import { MmdModel, MmdPhysics, MmdRuntime, MmdStandardMaterialBuilder, SdefInjector } from 'babylon-mmd'
 import { AkiraButton } from './Elements/AkiraButton'
-import { ArrowsAltOutlined, EyeInvisibleOutlined, EyeOutlined, MutedOutlined, PauseOutlined, PlayCircleOutlined, QuestionOutlined, SettingFilled, SkinOutlined, SoundOutlined, TableOutlined, VideoCameraFilled } from '@ant-design/icons'
+import { EyeInvisibleOutlined, EyeOutlined, MutedOutlined, PauseOutlined, PlayCircleOutlined, SoundOutlined, UploadOutlined } from '@ant-design/icons'
 import { Inspector } from '@babylonjs/inspector';
 import { AkiraDrawer } from "./Elements/AkiraDrawer";
 import { FilesetResolver, HolisticLandmarker } from "@mediapipe/tasks-vision";
@@ -14,15 +14,12 @@ import { KeyFrameType, MotionModel, MotionSettingsType, SETTINGS_CONFIGType } fr
 import AkiraRadioButton from './Elements/AkiraRadioButton'
 import { IsUUID } from './logic/extentions'
 import { useSavedModel } from './hooks/useSavedModel'
-import { Button, GetRef, InputNumber, Tour } from 'antd'
+import { InputNumber } from 'antd'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { MaterialsDrawer } from './Elements/ControlModelAnimation/MaterialsDrawer'
 import { AnimationControlUi } from './Elements/ControlModelAnimation/AnimationControlUi'
-import { getSteps } from './logic/helperTour'
 import { Holistic } from '@mediapipe/holistic'
 
-import * as Kalidokit from 'kalidokit';
 import { ControlPanel } from './Elements/ControlPanel'
 import { AIAkiraDrawer } from './logic/LLM/AIAkiraDrawer'
 export type DrawerStatesType = {
@@ -120,11 +117,16 @@ export default function ScenePage() {
         if (!SelectedOld && HolisticRef.current && VideoCurrentRef.current && !VideoCurrentRef.current.paused && VideoCurrentRef.current.readyState >= 2) {
             var timestamp = performance.now()
             HolisticRef.current!.detectForVideo(VideoCurrentRef.current, timestamp, (res) => {
-                if (VideoState.SkeletonPlaced) {
-                    SkeletonShow.onShowSkeleton(SkeletonCanvasRef, res)
-                }
+                if (VideoState.SkeletonPlaced) SkeletonShow.onShowSkeleton(SkeletonCanvasRef, res)
                 if (MMDStates.MMDRuntime && MMDStates.MMDModel) {
+                    //v1
                     MotionCap.motionCalculate(res)
+                    //v2
+                    // var bones = new GrokFunc().mapLandmarksToMmdBones(res).bones
+                    // Object.keys(bones).map((el) => {
+
+                    //     MotionCap.setRotation(el as any, bones[el].rotation)
+                    // })
                     SetKeyFrames(MotionCap.keyframes)
                 }
             });
@@ -166,7 +168,8 @@ export default function ScenePage() {
         MMDModel?: MmdModel,
         MMDEngine?: Engine,
         MMDAssetContainer?: AssetContainer
-        MMDShadowManager?: ShadowGenerator
+        MMDShadowManager?: ShadowGenerator,
+        MMDDebugLayer?: DebugLayer
     }>({})
 
     //Controls
@@ -351,17 +354,17 @@ export default function ScenePage() {
 
         mmdscene.onAfterRenderObservable.addOnce(() => engine.hideLoadingUI());
         if (scene) {
-            Promise.all([loadModel(engine, mmdscene, scene.modelPathOrLink, mmdRuntime, shadowGenerator), mmdscene.debugLayer.show()]).then(([res, debugLayer]) => {
+            Promise.all([loadModel(engine, mmdscene, scene.modelPathOrLink, mmdRuntime, shadowGenerator), mmdscene.debugLayer]).then(([res, debugLayer]) => {
                 SetMMDStates({
                     MMDRuntime: mmdRuntime,
                     MMDScene: mmdscene,
                     MMDEngine: engine,
                     MMDModel: mmdRuntime.createMmdModel(res.Model),
                     MMDAssetContainer: res.AssetContainer,
-                    MMDShadowManager: shadowGenerator
+                    MMDShadowManager: shadowGenerator,
+                    MMDDebugLayer: debugLayer
                 });
-                debugLayer.popupSceneExplorer();
-                debugLayer.popupInspector();
+
             });
         }
 
@@ -465,8 +468,8 @@ export default function ScenePage() {
                                     className="text-white hover:text-purple-400 transition-colors"
                                 >
                                     {VideoState.isPlaying ?
-                                        <PauseOutlined className="text-2xl" /> :
-                                        <PlayCircleOutlined className="text-2xl" />
+                                        <PauseOutlined className="text-xl" /> :
+                                        <PlayCircleOutlined className="text-xl" />
                                     }
                                 </button>
 
@@ -476,19 +479,33 @@ export default function ScenePage() {
                                     className={`transition-colors ${VideoState.SkeletonPlaced ? 'text-purple-400' : 'text-white hover:text-purple-400'}`}
                                 >
                                     {VideoState.SkeletonPlaced ?
-                                        <EyeOutlined className="text-2xl" /> :
-                                        <EyeInvisibleOutlined className="text-2xl" />
+                                        <EyeOutlined className="text-xl" /> :
+                                        <EyeInvisibleOutlined className="text-xl" />
                                     }
                                 </button>
-
+                                <label htmlFor="file" className='cursor-pointer flex justify-center text-purple-400 items-center h-[25px] w-full'>
+                                    <UploadOutlined className="text-xl" />
+                                </label>
+                                <input
+                                    id="file"
+                                    type="file"
+                                    className="hidden"
+                                    accept="video/*"
+                                    onChange={async (event) => {
+                                        const file = event.target.files![0]
+                                        const url = URL.createObjectURL(file);
+                                        VideoCurrentRef.current!.src = url;
+                                        requestAnimationFrame(runAnimation)
+                                    }}
+                                />
                                 <button
                                     id="SoundEnabled"
                                     onClick={onClicked}
                                     className={`transition-colors ${VideoState.SoundEnabled ? 'text-purple-400' : 'text-white hover:text-purple-400'}`}
                                 >
                                     {VideoState.SoundEnabled ?
-                                        <SoundOutlined className="text-2xl" /> :
-                                        <MutedOutlined className="text-2xl" />
+                                        <SoundOutlined className="text-xl" /> :
+                                        <MutedOutlined className="text-xl" />
                                     }
                                 </button>
                             </div>
@@ -578,7 +595,7 @@ export default function ScenePage() {
                 </div>
             </AkiraDrawer>
             {MMDStates.MMDRuntime && MMDStates.MMDScene && <AIAkiraDrawer motionModel={MotionCap} mmdRuntime={MMDStates.MMDRuntime} mmdScene={MMDStates.MMDScene} DrawerStates={DrawerStates} OpenDrawer={OpenDrawer} />}
-            
+
             <AkiraDrawer
                 title="Settings"
                 placement="right"
@@ -643,6 +660,23 @@ export default function ScenePage() {
                             value={SETTINGS_CONFIG.POSE_Y_SCALE}
                         />
                     </div>
+                </div>
+                <p className='text-ForegroundColor text-lg text-center font-bold mb-4'>
+                    Babylonjs UI
+                </p>
+                <div className='flex gap-y-3 flex-col justify-center items-center'>
+                    <AkiraButton className=' w-full' onClick={() => {
+                        MMDStates.MMDDebugLayer.show({ showInspector: true, showExplorer: false })
+                        MMDStates.MMDDebugLayer.popupInspector();
+                    }}>
+                        Open INSPECTOR
+                    </AkiraButton>
+                    <AkiraButton className='w-full' onClick={() => {
+                        MMDStates.MMDDebugLayer.show({ showInspector: false, showExplorer: true })
+                        MMDStates.MMDDebugLayer.popupSceneExplorer();
+                    }}>
+                        Open SCENE EXPLORER
+                    </AkiraButton>
                 </div>
             </AkiraDrawer>
 

@@ -119,7 +119,7 @@ ipcMain.handle('sendMessage', async (event, arg) => {
 
 ipcMain.handle('getlocales', async () => {
   try {
-    console.log(process.cwd())
+
     const localesPath = path.join('../assets/locales');
     const dirs = await readdir("./assets/locales/", { withFileTypes: true });
     return dirs.filter(d => d.isDirectory()).map(d => d.name);
@@ -148,8 +148,8 @@ ipcMain.handle('get-animations', async () => {
     const userAnimsPath = path.join(app.getPath('userData'), 'user_animations');
     let baseAnims: string[] = [];
     let userAnims: string[] = [];
-    try { baseAnims = fs.readdirSync(baseAnimsPath).filter(f => f.endsWith('.vmd')); } catch { }
-    try { userAnims = fs.readdirSync(userAnimsPath).filter(f => f.endsWith('.vmd')); } catch { }
+    try { baseAnims = fs.readdirSync(baseAnimsPath).filter(f => f.endsWith('.vmd') || f.endsWith('.bvmd')); } catch { }
+    try { userAnims = fs.readdirSync(userAnimsPath).filter(f => f.endsWith('.vmd') || f.endsWith('.bvmd')); } catch { }
     return { base: baseAnims, user: userAnims };
   } catch (e) {
     return { base: [], user: [] };
