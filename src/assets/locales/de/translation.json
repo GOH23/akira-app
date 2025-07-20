@@ -26,7 +26,8 @@
     "SelectButtonNew": {
       "webName": "Web",
       "desktopName": "Anwendung"
-    }
+    },
+    "guideButton": "Anleitung"
   },
   "scenePage": {
     "MotionCaptureSettings": {
@@ -93,11 +94,29 @@
     "titleLang": "Ausgewählte Sprache",
     "titleSelectModel": "Ausgewähltes Modell",
     "titleSceneName": "Szenenname",
+    "skeleton": {
+      "title": "Skelett-Anpassung",
+      "showPose": "Pose anzeigen",
+      "poseColor": "Posenfarbe",
+      "poseLineWidth": "Posen-Linienstärke",
+      "showHands": "Hände anzeigen",
+      "handColor": "Handfarbe",
+      "handLineWidth": "Hand-Linienstärke",
+      "showFace": "Gesicht anzeigen",
+      "faceColor": "Gesichtsfarbe",
+      "faceLineWidth": "Gesicht-Linienstärke"
+    },
     "buttons": {
       "cancelButton": "Abbrechen",
       "submitButton": "Speichern",
       "selectModel": "Modell auswählen",
       "addModel": "Modell hinzufügen"
+    },
+    "ollama": {
+      "host": "Ollama Host",
+      "model": "Ollama Modell",
+      "loading": "Lädt...",
+      "selectModel": "Modell auswählen"
     }
   },
   "messages": {

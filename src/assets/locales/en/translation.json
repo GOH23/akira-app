@@ -26,7 +26,8 @@
         "SelectButtonNew": {
             "webName": "Web",
             "desktopName": "Application"
-        }
+        },
+        "guideButton": "Guide"
     },
     "scenePage": {
         "MotionCaptureSettings": {
@@ -98,6 +99,24 @@
             "submitButton": "Submit",
             "selectModel": "Select Model",
             "addModel": "Add Model"
+        },
+        "skeleton": {
+            "title": "Skeleton Customization",
+            "showPose": "Show Pose",
+            "poseColor": "Pose Color",
+            "poseLineWidth": "Pose Line Width",
+            "showHands": "Show Hands",
+            "handColor": "Hand Color",
+            "handLineWidth": "Hand Line Width",
+            "showFace": "Show Face",
+            "faceColor": "Face Color",
+            "faceLineWidth": "Face Line Width"
+        },
+        "ollama": {
+            "host": "Ollama Host",
+            "model": "Ollama Model",
+            "loading": "Loading...",
+            "selectModel": "Select model"
         }
     },
     "messages": {
@@ -135,26 +154,16 @@
         "error": "Error receiving response from AI"
     },
     "guide": {
-        "title": "AI Assistant & Ollama Guide",
-        "howToUseTitle": "🧑‍💻 How to Use the Neural Network (AI Assistant)",
-        "howToUseStep1": "Open the AI Assistant (chat icon or 'AI Assistant' drawer).",
-        "howToUseStep2": "Type your message and send.",
-        "howToUseStep3": "Akira will respond using the selected LLM model, trigger animation and voice.",
-        "howToUseStep4": "Change language in settings for multilingual answers.",
-        "howToUseStep5": "Enable/disable audio output in the chat footer.",
-        "note": "Note:",
-        "noteText": "For the AI Assistant to work, you must have a local Ollama server running with a compatible LLM model installed (see below).",
-        "ollamaTitle": "🤖 How to Install and Use Ollama",
-        "ollamaStep1": "Go to https://ollama.com/download and install for your OS.",
-        "ollamaStep2": "Run ollama serve (or launch from Start menu on Windows).",
-        "ollamaStep3": "Pull a model: ollama pull llama3 (or another from Ollama Library).",
-        "ollamaStep4": "In Akira, open Settings → Ollama Host, set to http://localhost:11434 (default), and select your model.",
-        "ollamaStep5": "Open the AI Assistant and start chatting!",
-        "troubleshootingTitle": "❓ Troubleshooting",
-        "troubleshooting1": "If you see errors like 'Failed to connect to Ollama' or 'No models found':",
-        "troubleshooting2": "Make sure Ollama is running and accessible at the configured host.",
-        "troubleshooting3": "Ensure you have pulled at least one model (e.g., ollama pull llama3).",
-        "troubleshooting4": "Check firewall/antivirus settings if running on Windows.",
-        "moreHelp": "For more help, see the Ollama documentation or open an issue in this repository."
+        "title": "Welcome to Akira!",
+        "intro": "Akira is a modern application for 3D animation, motion capture, and working with MMD models. This guide will help you quickly get started and use all the features.",
+        "step1": "Main page: Here you will find the latest news, social links, support, and can proceed to create or select scenes.",
+        "step2": "Scenes and models: In the 'Scenes' section, you can create new scenes, upload your 3D models (.bpmx format), and select animations for them.",
+        "step3": "Loading animations: Go to a scene, use the control panel to load .vmd animation files. You can combine several animations and control their parameters.",
+        "step4": "Motion Capture: Use the built-in motion capture with your camera. Open the corresponding panel, select a video source, and start capturing. Movements will be automatically applied to the selected model.",
+        "step5": "Materials and appearance: In the 'Materials' panel, you can adjust colors, transparency, and other material parameters.",
+        "step6": "Export: After creating an animation, you can export the result to GLTF or VMD formats for further use.",
+        "step7": "Voice assistant and AI: The built-in AI assistant helps generate animations, gives tips, and automates routine tasks.",
+        "step8": "Support and feedback: If you have questions or suggestions, join our Discord or write on GitHub.",
+        "okButton": "Got it"
     }
 }

@@ -19,52 +19,76 @@ export class SkeletonShow {
         }
 
     }
-    static onOldShowSkeleton(canvas: RefObject<HTMLCanvasElement | null>, results: Results) {
+    static onOldShowSkeleton(
+        canvas: RefObject<HTMLCanvasElement | null>,
+        results: Results,
+        skeletonSettings?: {
+            showPose?: boolean;
+            poseColor?: string;
+            poseLineWidth?: number;
+            showHands?: boolean;
+            handColor?: string;
+            handLineWidth?: number;
+            showFace?: boolean;
+            faceColor?: string;
+            faceLineWidth?: number;
+        }
+    ) {
         if (canvas.current) {
             var canvasElement = canvas.current;
             const canvasCtx = canvas.current.getContext('2d')!;
 
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-                color: "#00cff7",
-                lineWidth: 4,
-            });
-            drawLandmarks(canvasCtx, results.poseLandmarks, {
-                color: "#ff0364",
-                lineWidth: 2,
-            });
-            drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION, {
-                color: "#C0C0C070",
-                lineWidth: 1,
-            });
-            if (results.faceLandmarks && results.faceLandmarks.length === 478) {
-                //draw pupils
-                drawLandmarks(
-                    canvasCtx,
-                    [results.faceLandmarks[468], results.faceLandmarks[468 + 5]],
-                    {
-                        color: "#ffe603",
-                        lineWidth: 2,
-                    }
-                );
+            // Pose
+            if (skeletonSettings?.showPose ?? true) {
+                drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+                    color: skeletonSettings?.poseColor ?? "#00cff7",
+                    lineWidth: skeletonSettings?.poseLineWidth ?? 4,
+                });
+                drawLandmarks(canvasCtx, results.poseLandmarks, {
+                    color: "#ff0364",
+                    lineWidth: 2,
+                });
             }
-            drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, {
-                color: "#eb1064",
-                lineWidth: 5,
-            });
-            drawLandmarks(canvasCtx, results.leftHandLandmarks, {
-                color: "#00cff7",
-                lineWidth: 2,
-            });
-            drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, {
-                color: "#22c3e3",
-                lineWidth: 5,
-            });
-            drawLandmarks(canvasCtx, results.rightHandLandmarks, {
-                color: "#ff0364",
-                lineWidth: 2,
-            });
+            // Face
+            if ((skeletonSettings?.showFace ?? true) && results.faceLandmarks) {
+                drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION, {
+                    color: skeletonSettings?.faceColor ?? "#C0C0C070",
+                    lineWidth: skeletonSettings?.faceLineWidth ?? 1,
+                });
+                if (results.faceLandmarks.length === 478) {
+                    //draw pupils
+                    drawLandmarks(
+                        canvasCtx,
+                        [results.faceLandmarks[468], results.faceLandmarks[468 + 5]],
+                        {
+                            color: "#ffe603",
+                            lineWidth: 2,
+                        }
+                    );
+                }
+            }
+            // Left Hand
+            if (skeletonSettings?.showHands ?? true) {
+                drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, {
+                    color: skeletonSettings?.handColor ?? "#eb1064",
+                    lineWidth: skeletonSettings?.handLineWidth ?? 5,
+                });
+                drawLandmarks(canvasCtx, results.leftHandLandmarks, {
+                    color: "#00cff7",
+                    lineWidth: 2,
+                });
+                // Right Hand
+                drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, {
+                    color: skeletonSettings?.handColor ?? "#22c3e3",
+                    lineWidth: skeletonSettings?.handLineWidth ?? 5,
+                });
+                drawLandmarks(canvasCtx, results.rightHandLandmarks, {
+                    color: "#ff0364",
+                    lineWidth: 2,
+                });
+            }
             canvasCtx.restore();
 
         }

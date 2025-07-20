@@ -14,6 +14,8 @@ import { useSearchParams } from 'react-router-dom';
 import { DeleteFilled } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { OllamaAIAssistant } from '../logic/LLM/ollama';
+import { useTheme } from "next-themes";
+import { useNextJSToAntdTheme } from "../hooks/useCustomTheme";
 
 const modalStyles = {
     mask: {
@@ -204,6 +206,21 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
     const [baseModels, setBaseModels] = useState<any[]>([]);
     const [userModels, setUserModels] = useState<any[]>([]);
 
+    // Debounced color state for poseColor
+    const [localPoseColor, setLocalPoseColor] = useState<string>(scene?.skeletonSettings?.poseColor ?? '#00cff7');
+    useEffect(() => {
+        setLocalPoseColor(scene?.skeletonSettings?.poseColor ?? '#00cff7');
+    }, [scene?.skeletonSettings?.poseColor]);
+    // Debounce update
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (scene && localPoseColor !== scene.skeletonSettings?.poseColor) {
+                changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseColor: localPoseColor });
+            }
+        }, 150);
+        return () => clearTimeout(handler);
+    }, [localPoseColor]);
+
     useEffect(() => {
       async function loadLangs() {
         let langLabels: Record<string, string> = {};
@@ -229,6 +246,9 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
       }
     }, []);
 
+    const { theme } = useTheme();
+    const { Layout, MenuTheme, borderColor } = useNextJSToAntdTheme(theme);
+
     return (<>
 
         <Modal onCancel={SetOpened} title={<div className="bg-transparent">
@@ -252,7 +272,7 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
             </div>
             <div className="my-2">
                 <div className="flex justify-end items-center gap-x-3">
-                    <p className="text-ForegroundColor">Ollama Host</p>
+                    <p className="text-ForegroundColor">{t("settingsModal.ollama.host")}</p>
                     <Input
                         value={ollamaHost}
                         onChange={e => setOllamaHost(e.target.value)}
@@ -263,13 +283,13 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
             </div>
             <div className="my-2">
                 <div className="flex justify-end items-center gap-x-3">
-                    <p className="text-ForegroundColor">Ollama Model</p>
+                    <p className="text-ForegroundColor">{t("settingsModal.ollama.model")}</p>
                     <Select
                         loading={ollamaModelLoading}
                         value={selectedOllamaModel}
                         onChange={handleOllamaModelChange}
                         className="w-52"
-                        placeholder={ollamaModelLoading ? 'Loading...' : 'Select model'}
+                        placeholder={ollamaModelLoading ? t("settingsModal.ollama.loading") : t("settingsModal.ollama.selectModel")}
                         disabled={ollamaModelLoading || !!ollamaModelError || ollamaModels.length === 0}
                     >
                         {ollamaModels.map(model => (
@@ -291,6 +311,57 @@ export default function SettingsModal({ opened, SetOpened }: { opened: boolean, 
                         changeSceneSetting(scene.id, "sceneName", ev.target.value)
                     }} />
 
+                </div>
+                <div
+                    className="my-4 p-4 border rounded-md"
+                    style={{
+                        background: Layout.bg || "#f9f9f9",
+                        borderColor: borderColor || "#e5e7eb",
+                        color: Layout.fg || "#222"
+                    }}
+                >
+                    <p className="font-bold mb-2" style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.title")}</p>
+                    <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showPose ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showPose: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showPose")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.poseColor")}</span>
+                            <input
+                                type="color"
+                                value={localPoseColor}
+                                onChange={e => setLocalPoseColor(e.target.value)}
+                                onBlur={e => {
+                                    if (scene && localPoseColor !== scene.skeletonSettings?.poseColor) {
+                                        changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseColor: localPoseColor });
+                                    }
+                                }}
+                            />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.poseLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.poseLineWidth ?? 4} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, poseLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showHands ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showHands: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showHands")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.handColor")}</span>
+                            <input type="color" value={scene.skeletonSettings?.handColor ?? '#eb1064'} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, handColor: e.target.value })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.handLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.handLineWidth ?? 5} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, handLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={scene.skeletonSettings?.showFace ?? true} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, showFace: e.target.checked })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.showFace")}</span>
+                        </label>
+                        <div className="flex items-center gap-2 ml-4">
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.faceColor")}</span>
+                            <input type="color" value={scene.skeletonSettings?.faceColor ?? '#C0C0C070'} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, faceColor: e.target.value })} />
+                            <span style={{ color: Layout.fg || undefined }}>{t("settingsModal.skeleton.faceLineWidth")}</span>
+                            <input type="number" min={1} max={10} value={scene.skeletonSettings?.faceLineWidth ?? 1} onChange={e => changeSceneSetting(scene.id, "skeletonSettings", { ...scene.skeletonSettings, faceLineWidth: Number(e.target.value) })} style={{ width: 60 }} />
+                        </div>
+                    </div>
                 </div>
                 <AkiraButton className="w-full" onClick={() => SetSubModalOpened(true)}>{t("settingsModal.buttons.selectModel")}</AkiraButton>
             </div>}

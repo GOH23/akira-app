@@ -26,7 +26,8 @@
     "SelectButtonNew": {
       "webName": "Web",
       "desktopName": "Application"
-    }
+    },
+    "guideButton": "Guide"
   },
   "scenePage": {
     "MotionCaptureSettings": {
@@ -98,6 +99,24 @@
       "submitButton": "Enregistrer",
       "selectModel": "Sélectionner un modèle",
       "addModel": "Ajouter un modèle"
+    },
+    "skeleton": {
+      "title": "Personnalisation du squelette",
+      "showPose": "Afficher la pose",
+      "poseColor": "Couleur de la pose",
+      "poseLineWidth": "Épaisseur de la ligne de la pose",
+      "showHands": "Afficher les mains",
+      "handColor": "Couleur des mains",
+      "handLineWidth": "Épaisseur de la ligne des mains",
+      "showFace": "Afficher le visage",
+      "faceColor": "Couleur du visage",
+      "faceLineWidth": "Épaisseur de la ligne du visage"
+    },
+    "ollama": {
+      "host": "Hôte Ollama",
+      "model": "Modèle Ollama",
+      "loading": "Chargement...",
+      "selectModel": "Sélectionner un modèle"
     }
   },
   "messages": {

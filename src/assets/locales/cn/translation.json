@@ -26,7 +26,8 @@
         "SelectButtonNew": {
             "webName": "网页",
             "desktopName": "应用"
-        }
+        },
+        "guideButton": "指南"
     },
     "scenePage": {
         "MotionCaptureSettings": {
@@ -90,14 +91,32 @@
     },
     "settingsModal": {
         "title": "设置",
-        "titleLang": "语言",
-        "titleSelectModel": "模型",
+        "titleLang": "选择的语言",
+        "titleSelectModel": "选择的模型",
         "titleSceneName": "场景名称",
         "buttons": {
             "cancelButton": "取消",
             "submitButton": "提交",
             "selectModel": "选择模型",
             "addModel": "添加模型"
+        },
+        "skeleton": {
+            "title": "骨骼自定义",
+            "showPose": "显示姿势",
+            "poseColor": "姿势颜色",
+            "poseLineWidth": "姿势线宽",
+            "showHands": "显示手部",
+            "handColor": "手部颜色",
+            "handLineWidth": "手部线宽",
+            "showFace": "显示面部",
+            "faceColor": "面部颜色",
+            "faceLineWidth": "面部线宽"
+        },
+        "ollama": {
+            "host": "Ollama主机",
+            "model": "Ollama模型",
+            "loading": "加载中...",
+            "selectModel": "选择模型"
         }
     },
     "messages": {

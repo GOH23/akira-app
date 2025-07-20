@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CodeFilled, DiscordOutlined, GithubFilled, StarFilled } from "@ant-design/icons"
 import { AkiraModalDialog } from '../Components/Elements/AkiraModalDialog';
 import { useTranslation } from 'react-i18next';
+import { AkiraGuideModal } from './Elements/AkiraGuideModal';
 
 const AkiraTitle = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -115,6 +116,12 @@ export default function MainPage() {
     const [starWebCount, setStarWebCount] = useState(0);
     const [starAppCount, setStarAppCount] = useState(0);
     const [isWeb, setIsWeb] = useState(false);
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
+
+    useEffect(() => {
+        // Автоматически показывать гайд при первом запуске
+        setIsGuideOpen(true);
+    }, []);
 
     useEffect(() => {
         // Fetch GitHub pull requests
@@ -153,11 +160,17 @@ export default function MainPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 mt-12 to-white">
             <div className="max-w-6xl mx-auto px-4 py-12">
-                <div className="text-center mb-12">
-                    <AkiraTitle>{t("mainPage.NewTitle")}</AkiraTitle>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        Welcome to Akira - Your creative companion for 3D animation and motion capture
-                    </p>
+                <div className="text-center mb-12 flex flex-col items-center">
+                    <div className="flex justify-center items-center w-full mb-2">
+                        <AkiraTitle>{t("mainPage.NewTitle")}</AkiraTitle>
+                        <button
+                            onClick={() => setIsGuideOpen(true)}
+                            className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg shadow hover:from-purple-600 hover:to-blue-600 transition-all"
+                        >
+                            {t('mainPage.guideButton')}
+                        </button>
+                    </div>
+                   
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -221,6 +234,7 @@ export default function MainPage() {
                 }}
                 pr={selectedPR}
             />
+            <AkiraGuideModal open={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
         </div>
     );
 }

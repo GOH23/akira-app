@@ -23,7 +23,8 @@
         "SelectButtonNew": {
             "webName": "Web",
             "desktopName": "アプリ"
-        }
+        },
+        "guideButton": "ガイド"
     },
     "scenePage": {
         "MotionCaptureSettings": {
@@ -87,14 +88,32 @@
     },
     "settingsModal": {
         "title": "設定",
-        "titleLang": "言語",
-        "titleSelectModel": "モデル",
+        "titleLang": "選択言語",
+        "titleSelectModel": "選択されたモデル",
         "titleSceneName": "シーン名",
         "buttons": {
             "cancelButton": "キャンセル",
             "submitButton": "保存",
             "selectModel": "モデルを選択",
             "addModel": "モデルを追加"
+        },
+        "skeleton": {
+            "title": "スケルトンカスタマイズ",
+            "showPose": "ポーズを表示",
+            "poseColor": "ポーズの色",
+            "poseLineWidth": "ポーズの線幅",
+            "showHands": "手を表示",
+            "handColor": "手の色",
+            "handLineWidth": "手の線幅",
+            "showFace": "顔を表示",
+            "faceColor": "顔の色",
+            "faceLineWidth": "顔の線幅"
+        },
+        "ollama": {
+            "host": "Ollamaホスト",
+            "model": "Ollamaモデル",
+            "loading": "読み込み中...",
+            "selectModel": "モデルを選択"
         }
     },
     "messages": {

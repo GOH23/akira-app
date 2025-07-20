@@ -103,8 +103,8 @@ export default function HeaderLayout() {
     // Получаем текущую сцену
 
     useEffect(() => {
-        if (SelectedScene) SetModalDeleteSceneOpened(!ModalDeleteSceneOpened);
-    }, [SelectedScene])
+        SetModalDeleteSceneOpened(!!SelectedScene);
+    }, [SelectedScene]);
 
 
     const handleWebOpen = () => {
