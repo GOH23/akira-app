@@ -75,7 +75,7 @@ export default function ScenePage() {
         SetVideoState(newState)
     }
     //mediapipe with drawing
-    const [SelectedOld, SetSelectedOld] = useState(false)
+    const [SelectedOld, SetSelectedOld] = useState(true)
     const [MotionCap] = useState(new MotionModel())
     const HolisticRef = useRef<HolisticLandmarker>(null)
     const HolisticOldRef = useRef<Holistic>(new Holistic({
@@ -89,6 +89,10 @@ export default function ScenePage() {
         minDetectionConfidence: 0.7,
         minTrackingConfidence: 0.7,
         refineFaceLandmarks: true,
+    });
+    HolisticOldRef.current.onResults((res) => {
+        if (VideoState.SkeletonPlaced) SkeletonShow.onOldShowSkeleton(SkeletonCanvasRef, res)
+        MotionCap.motionOldCalculate(res as any, VideoCurrentRef.current)
     })
     const [OnHolisticLoaded, SetHolisticLoaded] = useState(false)
     const loadHolistic = async () => {
@@ -132,6 +136,7 @@ export default function ScenePage() {
             });
         }
         if (SelectedOld && VideoCurrentRef.current && !VideoCurrentRef.current.paused && VideoCurrentRef.current.readyState >= 2) {
+
             await HolisticOldRef.current.send({
                 image: VideoCurrentRef.current
             })
@@ -455,7 +460,7 @@ export default function ScenePage() {
                         ref={VideoCurrentRef}
                         controls={false}
                         className="w-full max-h-96 h-full object-contain"
-
+                        src='/assets/flash.mp4'
                         muted={!VideoState.SoundEnabled}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />

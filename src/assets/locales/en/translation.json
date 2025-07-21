@@ -165,5 +165,28 @@
         "step7": "Voice assistant and AI: The built-in AI assistant helps generate animations, gives tips, and automates routine tasks.",
         "step8": "Support and feedback: If you have questions or suggestions, join our Discord or write on GitHub.",
         "okButton": "Got it"
+    },
+    "bones": {
+        "UpperBody": "Upper Body",
+        "LowerBody": "Lower Body",
+        "LeftArm": "Left Arm",
+        "RightArm": "Right Arm",
+        "LeftElbow": "Left Elbow",
+        "RightElbow": "Right Elbow",
+        "LeftWrist": "Left Wrist",
+        "RightWrist": "Right Wrist",
+        "LeftHip": "Left Hip",
+        "RightHip": "Right Hip",
+        "LeftAnkle": "Left Ankle",
+        "RightAnkle": "Right Ankle",
+        "RightKnee": "Right Knee",
+        "LeftKnee": "Left Knee",
+        "RootBone": "Root Bone",
+        "Neck": "Neck",
+        "Head": "Head",
+        "LeftEye": "Left Eye",
+        "RightEye": "Right Eye",
+        "Eyebrows": "Eyebrows",
+        "Mouth": "Mouth"
     }
 }

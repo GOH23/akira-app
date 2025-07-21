@@ -148,5 +148,28 @@
       "troubleshooting3": "少なくとも1つモデルを取得しているか確認（例: ollama pull llama3）。",
       "troubleshooting4": "Windowsの場合はファイアウォールやウイルス対策ソフトの設定を確認。",
       "moreHelp": "詳細はOllamaドキュメント、またはこのリポジトリのissueをご参照ください。"
+    },
+    "bones": {
+      "UpperBody": "上半身",
+      "LowerBody": "下半身",
+      "LeftArm": "左腕",
+      "RightArm": "右腕",
+      "LeftElbow": "左ひじ",
+      "RightElbow": "右ひじ",
+      "LeftWrist": "左手首",
+      "RightWrist": "右手首",
+      "LeftHip": "左足",
+      "RightHip": "右足",
+      "LeftAnkle": "左足首",
+      "RightAnkle": "右足首",
+      "RightKnee": "右ひざ",
+      "LeftKnee": "左ひざ",
+      "RootBone": "全ての親",
+      "Neck": "首",
+      "Head": "頭",
+      "LeftEye": "左目",
+      "RightEye": "右目",
+      "Eyebrows": "眉",
+      "Mouth": "口"
     }
 }

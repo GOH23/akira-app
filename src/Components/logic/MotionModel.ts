@@ -8,6 +8,7 @@ import * as Kalidokit from 'kalidokit'
 import Encoding from "encoding-japanese"
 import { clamp } from "kalidokit/dist/utils/helpers";
 import { Results } from "@mediapipe/holistic";
+import { useTranslation } from "react-i18next";
 export type BoneType = "hand" | "pose" | "face"
 // Константы для имен костей
 export enum MMDModelBones {
@@ -64,6 +65,7 @@ const HUMAN_LIMITS = {
     HIP_Z: [-0.4, 0.4],       // Вращение бедра внутрь/наружу
     KNEE_Y: [0, 2.0]          // Сгибание колена
 };
+export type BoneSettings = Record<string, { offset: number }>;
 export class MotionModel {
     public _Recorder?: VideoRecorder
     public _Model?: MmdModel
@@ -180,15 +182,21 @@ export class MotionModel {
             }
         }
     }
-    applyKeyFrame(keyNum: number) {
+    applyKeyFrame(keyNum: number, boneSettings?: BoneSettings) {
         const frame = this.keyframes.find(f => f.keyNum === keyNum);
         if (!frame || !this._Model) return;
 
-        // Применяем данные костей
+        // Применяем данные костей с учетом индивидуальных настроек
         frame.keyData.forEach(bone => {
             const targetBone = this.boneMap.get(bone.boneName);
             if (targetBone) {
-                targetBone.position.set(bone.position[0], bone.position[1], bone.position[2]);
+                // Применяем offset для этого кадра, если есть
+                const offset = boneSettings?.[bone.boneName]?.offset || 0;
+                targetBone.position.set(
+                    bone.position[0] + offset,
+                    bone.position[1],
+                    bone.position[2]
+                );
                 targetBone.rotationQuaternion = new Quaternion(
                     bone.quanternion[0],
                     bone.quanternion[1],
@@ -302,7 +310,7 @@ export class MotionModel {
             //         riggedPose.LeftUpperArm.x * 1.2,
             //         -riggedPose.LeftUpperArm.y * 1.5,
             //         riggedPose.LeftUpperArm.z
-            //     ).normalize();
+            //     ).normalize();дда
             //     const leftArmRotation = Quaternion.FromEulerAngles(
             //         riggedPose.RightUpperArm.x * 1.2,
             //         -riggedPose.RightUpperArm.y * 1.5,
@@ -2356,6 +2364,17 @@ export class MotionModel {
         return new Blob([buffer], { type: "application/octet-stream" });
     }
 
+    // Получить список костей с переводом для UI
+    static getUserFriendlyBones(t: (key: string, fallback?: string) => string): { value: string, label: string, original: string }[] {
+        return Object.entries(MMDModelBones).map(([key, jpName]) => {
+            const translated = t(`bones.${key}`, key);
+            return {
+                value: jpName, // японское имя как ключ
+                label: `${jpName} — ${translated}`,
+                original: key // enum ключ для справки
+            };
+        });
+    }
 }
 class HolisticParser {
     mainBody: NormalizedLandmark[]
